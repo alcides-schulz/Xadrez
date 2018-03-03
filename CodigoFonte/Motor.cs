@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Enxadrista
 {
     /// <summary>
-    /// 
+    /// test
     /// </summary>
     public class Motor
     {
