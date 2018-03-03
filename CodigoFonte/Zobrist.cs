@@ -275,7 +275,7 @@ namespace Enxadrista
                     int indice12x12 = fileira * Defs.NUMERO_COLUNAS + coluna;
                     sbyte peca = tabuleiro.ObtemPeca(indice12x12);
                     if (peca == Defs.CASA_VAZIA) continue;
-                    int indice8x8 = Defs.ConvertePara8x8(indice12x12);
+                    int indice8x8 = Defs.Converte12x12Para8x8(indice12x12);
 
                     if (peca == Defs.PEAO_BRANCO) { chave ^= Zobrist.Chave.Branco.PEAO[indice8x8]; continue; }
                     if (peca == Defs.CAVALO_BRANCO) { chave ^= Zobrist.Chave.Branco.CAVALO[indice8x8]; continue; }
@@ -293,7 +293,7 @@ namespace Enxadrista
                 }
             }
 
-            if (tabuleiro.IndiceEnPassant != 0) chave ^= Zobrist.Chave.ENPASSANT[Defs.ConvertePara8x8(tabuleiro.IndiceEnPassant)];
+            if (tabuleiro.IndiceEnPassant != 0) chave ^= Zobrist.Chave.ENPASSANT[Defs.Converte12x12Para8x8(tabuleiro.IndiceEnPassant)];
 
             chave ^= Zobrist.Chave.Roque.E1G1[tabuleiro.RoqueE1G1 ? 0 : 1];
             chave ^= Zobrist.Chave.Roque.E1C1[tabuleiro.RoqueE1C1 ? 0 : 1];

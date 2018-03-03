@@ -393,7 +393,7 @@ namespace Enxadrista
         /// <param name="indice_origem">Posição do cavalo</param>
         private void GeraMovimentosCavalo(List<Movimento> lista, int indice_origem)
         {
-            foreach (int movimento in Defs.MOVIMENTOS_CAVALO) GeraMovimento(lista, indice_origem, indice_origem + movimento);
+            foreach (int movimento in Defs.Movimentos.CAVALO) GeraMovimento(lista, indice_origem, indice_origem + movimento);
         }
 
         /// <summary>
@@ -403,7 +403,7 @@ namespace Enxadrista
         /// <param name="indice_origem">Posição da torre ou dama</param>
         private void GeraMovimentosTorre(List<Movimento> lista, int indice_origem)
         {
-            foreach (int movimento in Defs.MOVIMENTOS_TORRE) GeraMovimentosNaDirecao(lista, indice_origem, movimento);
+            foreach (int movimento in Defs.Movimentos.TORRE) GeraMovimentosNaDirecao(lista, indice_origem, movimento);
         }
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace Enxadrista
         /// <param name="indice_origem">Posição do bispo ou dama</param>
         private void GeraMovimentosBispo(List<Movimento> lista, int indice_origem)
         {
-            foreach (int movimento in Defs.MOVIMENTOS_BISPO) GeraMovimentosNaDirecao(lista, indice_origem, movimento);
+            foreach (int movimento in Defs.Movimentos.BISPO) GeraMovimentosNaDirecao(lista, indice_origem, movimento);
         }
 
         /// <summary>
@@ -423,7 +423,7 @@ namespace Enxadrista
         /// <param name="indice_origem">Posição do rei</param>
         private void GeraMovimentosRei(List<Movimento> lista, int indice_origem)
         {
-            foreach (int movimento in Defs.MOVIMENTOS_REI) GeraMovimento(lista, indice_origem, indice_origem + movimento);
+            foreach (int movimento in Defs.Movimentos.REI) GeraMovimento(lista, indice_origem, indice_origem + movimento);
 
             if (CorJogar == Defs.COR_BRANCA) {
                 if (RoqueE1G1 && PodeGerarRoque((int)Defs.INDICE.F1, (int)Defs.INDICE.G1, (int)Defs.INDICE.H1, Defs.TORRE_BRANCA)) {
@@ -805,7 +805,7 @@ namespace Enxadrista
 
             sbyte cavalo = cor_atacante == Defs.COR_BRANCA ? Defs.CAVALO_BRANCO : Defs.CAVALO_PRETO;
 
-            foreach (int movimento in Defs.MOVIMENTOS_CAVALO) if (ObtemPeca(indice + movimento) == cavalo) return true;
+            foreach (int movimento in Defs.Movimentos.CAVALO) if (ObtemPeca(indice + movimento) == cavalo) return true;
 
             return false;
         }
@@ -824,7 +824,7 @@ namespace Enxadrista
             sbyte torre = cor_atacante == Defs.COR_BRANCA ? Defs.TORRE_BRANCA : Defs.TORRE_PRETA;
             sbyte dama = cor_atacante == Defs.COR_BRANCA ? Defs.DAMA_BRANCA : Defs.DAMA_PRETA;
 
-            foreach (int movimento in Defs.MOVIMENTOS_TORRE) {
+            foreach (int movimento in Defs.Movimentos.TORRE) {
                 int indice_destino = indice + movimento;
                 while(!BordaDoTabuleiro(indice_destino)) {
                     var peca = ObtemPeca(indice_destino);
@@ -851,7 +851,7 @@ namespace Enxadrista
             sbyte bispo = cor_atacante == Defs.COR_BRANCA ? Defs.BISPO_BRANCO : Defs.BISPO_PRETO;
             sbyte dama = cor_atacante == Defs.COR_BRANCA ? Defs.DAMA_BRANCA : Defs.DAMA_PRETA;
 
-            foreach (int movimento in Defs.MOVIMENTOS_BISPO) {
+            foreach (int movimento in Defs.Movimentos.BISPO) {
                 int indice_destino = indice + movimento;
                 while (!BordaDoTabuleiro(indice_destino)) {
                     var peca = ObtemPeca(indice_destino);
@@ -877,7 +877,7 @@ namespace Enxadrista
 
             sbyte rei = cor_atacante == Defs.COR_BRANCA ? Defs.REI_BRANCO : Defs.REI_PRETO;
 
-            foreach (int movimento in Defs.MOVIMENTOS_REI) if (ObtemPeca(indice + movimento) == rei) return true;
+            foreach (int movimento in Defs.Movimentos.REI) if (ObtemPeca(indice + movimento) == rei) return true;
 
             return false;
         }
@@ -901,7 +901,7 @@ namespace Enxadrista
         /// <param name="peca">Peça a ser colocada</param>
         public void ColocaPeca(int indice_destino, sbyte peca)
         {
-            Debug.Assert(Defs.ConvertePara8x8(indice_destino) >= 0 && Defs.ConvertePara8x8(indice_destino) < 64);
+            Debug.Assert(Defs.Converte12x12Para8x8(indice_destino) >= 0 && Defs.Converte12x12Para8x8(indice_destino) < 64);
             Debug.Assert(Quadrados[indice_destino] != Defs.BORDA);
             Debug.Assert(peca != Defs.PECA_NENHUMA);
 
@@ -1005,7 +1005,7 @@ namespace Enxadrista
                 s += "|";
                 for (int coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++) {
                     s += " ";
-                    s += Defs.Representacao(Quadrados[fileira * Defs.NUMERO_COLUNAS + coluna]);
+                    s += Defs.Letra(Quadrados[fileira * Defs.NUMERO_COLUNAS + coluna]);
                     s += " ";
                     s += "|";
                 }

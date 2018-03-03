@@ -218,11 +218,11 @@ namespace Enxadrista
         {
             Fase -= Pontuacao.Fase.PEAO;
             Branco.Inicial += Pontuacao.Material.PEAO_INICIO;
-            Branco.Inicial += Pontuacao.Tabela.PEAO_BRANCO[Defs.ConvertePara8x8(indice)];
+            Branco.Inicial += Pontuacao.Tabela.PEAO_BRANCO[Defs.Converte12x12Para8x8(indice)];
             if (indice == (int)Defs.INDICE.D4 || indice == (int)Defs.INDICE.E4) Branco.Inicial += Pontuacao.Peao.PEAO_CENTRAL_1;
             if (indice == (int)Defs.INDICE.D3 || indice == (int)Defs.INDICE.E3) Branco.Inicial += Pontuacao.Peao.PEAO_CENTRAL_2;
             Branco.Final += Pontuacao.Material.PEAO_FINAL;
-            Branco.Final += Pontuacao.Tabela.PEAO_BRANCO[Defs.ConvertePara8x8(indice)];
+            Branco.Final += Pontuacao.Tabela.PEAO_BRANCO[Defs.Converte12x12Para8x8(indice)];
         }
 
         /// <summary>
@@ -234,11 +234,11 @@ namespace Enxadrista
         {
             Fase -= Pontuacao.Fase.PEAO;
             Preto.Inicial += Pontuacao.Material.PEAO_INICIO;
-            Preto.Inicial += Pontuacao.Tabela.PEAO_PRETO[Defs.ConvertePara8x8(indice)];
+            Preto.Inicial += Pontuacao.Tabela.PEAO_PRETO[Defs.Converte12x12Para8x8(indice)];
             if (indice == (int)Defs.INDICE.D5 || indice == (int)Defs.INDICE.E5) Preto.Inicial += Pontuacao.Peao.PEAO_CENTRAL_1;
             if (indice == (int)Defs.INDICE.D6 || indice == (int)Defs.INDICE.E6) Preto.Inicial += Pontuacao.Peao.PEAO_CENTRAL_2;
             Preto.Final += Pontuacao.Material.PEAO_FINAL;
-            Preto.Final += Pontuacao.Tabela.PEAO_PRETO[Defs.ConvertePara8x8(indice)];
+            Preto.Final += Pontuacao.Tabela.PEAO_PRETO[Defs.Converte12x12Para8x8(indice)];
         }
 
         /// <summary>
@@ -255,9 +255,9 @@ namespace Enxadrista
         {
             Fase -= Pontuacao.Fase.CAVALO;
             pontuacao.Inicial += Pontuacao.Material.CAVALO_INICIO;
-            pontuacao.Inicial += Pontuacao.Tabela.CENTRALIZACAO[Defs.ConvertePara8x8(indice)];
+            pontuacao.Inicial += Pontuacao.Tabela.CENTRALIZACAO[Defs.Converte12x12Para8x8(indice)];
             pontuacao.Final += Pontuacao.Material.CAVALO_FINAL;
-            pontuacao.Final += Pontuacao.Tabela.CENTRALIZACAO[Defs.ConvertePara8x8(indice)];
+            pontuacao.Final += Pontuacao.Tabela.CENTRALIZACAO[Defs.Converte12x12Para8x8(indice)];
         }
 
 
@@ -275,9 +275,9 @@ namespace Enxadrista
         {
             Fase -= Pontuacao.Fase.BISPO;
             pontuacao.Inicial += Pontuacao.Material.BISPO_INICIO;
-            pontuacao.Inicial += Pontuacao.Tabela.CENTRALIZACAO[Defs.ConvertePara8x8(indice)];
+            pontuacao.Inicial += Pontuacao.Tabela.CENTRALIZACAO[Defs.Converte12x12Para8x8(indice)];
             pontuacao.Final += Pontuacao.Material.BISPO_FINAL;
-            pontuacao.Final += Pontuacao.Tabela.CENTRALIZACAO[Defs.ConvertePara8x8(indice)];
+            pontuacao.Final += Pontuacao.Tabela.CENTRALIZACAO[Defs.Converte12x12Para8x8(indice)];
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace Enxadrista
             Fase -= Pontuacao.Fase.DAMA;
             pontuacao.Inicial += Pontuacao.Material.DAMA_INICIO;
             pontuacao.Final += Pontuacao.Material.DAMA_FINAL;
-            pontuacao.Final += Pontuacao.Tabela.CENTRALIZACAO[Defs.ConvertePara8x8(indice)] / 2;
+            pontuacao.Final += Pontuacao.Tabela.CENTRALIZACAO[Defs.Converte12x12Para8x8(indice)] / 2;
         }
 
         /// <summary>
@@ -355,7 +355,7 @@ namespace Enxadrista
             for (int i = 0; i < dados_rei.DirecaoEmFrente.Length; i++) {
                 if (Tabuleiro.ObtemPeca(indice + i) == dados_rei.PeaoAmigo) pontuacao.Inicial += Pontuacao.Rei.PEAO_ESCUDO;
             }
-            pontuacao.Inicial += dados_rei.TabelaInicio[Defs.ConvertePara8x8(indice)];
+            pontuacao.Inicial += dados_rei.TabelaInicio[Defs.Converte12x12Para8x8(indice)];
         }
 
         /// <summary>

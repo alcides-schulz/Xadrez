@@ -8,12 +8,20 @@ using System.Diagnostics;
 namespace Enxadrista
 {
     /// <summary>
-    /// Definições Gerais do jogo
+    /// Definições Gerais do jogo.
     /// </summary>
+    /// <remarks>
+    /// Algumas definições precisam estar em harmonia com o tabuleiro, pois dependem
+    /// da estrutura (número de colunas vs número de fileiras).
+    /// </remarks>
     public class Defs
     {
+        /// <summary>
+        /// FEN da posição inicial.
+        /// </summary>
         public const string FEN_POSICAO_INICIAL = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
+        // Estrutura do tabuleiro
         public const int PRIMEIRA_FILEIRA = 2;
         public const int ULTIMA_FILEIRA = 10;
         public const int PRIMEIRA_COLUNA = 2;
@@ -22,6 +30,7 @@ namespace Enxadrista
         public const int NUMERO_COLUNAS = 12;
         public const int INDICE_MAXIMO = NUMERO_FILEIRAS * NUMERO_COLUNAS;
 
+        // Definições para localizar outras casas no tabuleiro.
         public const int POSICAO_NORTE = -12;
         public const int POSICAO_SUL = 12;
         public const int POSICAO_OESTE = -1;
@@ -31,45 +40,61 @@ namespace Enxadrista
         public const int POSICAO_SUDESTE = 13;
         public const int POSICAO_SUDOESTE = 11;
 
-        public static readonly int[] MOVIMENTOS_CAVALO = {
-            Defs.POSICAO_NORTE + Defs.POSICAO_NORDESTE,
-            Defs.POSICAO_NORTE + Defs.POSICAO_NOROESTE,
-            Defs.POSICAO_LESTE + Defs.POSICAO_NORDESTE,
-            Defs.POSICAO_LESTE + Defs.POSICAO_SUDESTE,
-            Defs.POSICAO_SUL + Defs.POSICAO_SUDESTE,
-            Defs.POSICAO_SUL + Defs.POSICAO_SUDOESTE,
-            Defs.POSICAO_OESTE + Defs.POSICAO_SUDOESTE,
-            Defs.POSICAO_OESTE + Defs.POSICAO_NOROESTE
-        };
-
-        public static readonly int[] MOVIMENTOS_REI = {
-            Defs.POSICAO_NORTE,
-            Defs.POSICAO_NORDESTE,
-            Defs.POSICAO_LESTE,
-            Defs.POSICAO_SUDESTE,
-            Defs.POSICAO_SUL,
-            Defs.POSICAO_SUDOESTE,
-            Defs.POSICAO_OESTE,
-            Defs.POSICAO_NOROESTE
-        };
-
-        public static readonly int[] MOVIMENTOS_TORRE = {
-            Defs.POSICAO_NORTE,
-            Defs.POSICAO_LESTE,
-            Defs.POSICAO_SUL,
-            Defs.POSICAO_OESTE
-        };
-
-        public static readonly int[] MOVIMENTOS_BISPO = {
-            Defs.POSICAO_NORDESTE,
-            Defs.POSICAO_SUDESTE,
-            Defs.POSICAO_SUDOESTE,
-            Defs.POSICAO_NOROESTE
-        };
+        /// <summary>
+        /// Definições de movimentos para peças.
+        /// </summary>
+        public class Movimentos
+        {
+            /// <summary>
+            /// Movimentos do Cavalo.
+            /// </summary>
+            public static readonly int[] CAVALO = {
+                Defs.POSICAO_NORTE + Defs.POSICAO_NORDESTE,
+                Defs.POSICAO_NORTE + Defs.POSICAO_NOROESTE,
+                Defs.POSICAO_LESTE + Defs.POSICAO_NORDESTE,
+                Defs.POSICAO_LESTE + Defs.POSICAO_SUDESTE,
+                Defs.POSICAO_SUL + Defs.POSICAO_SUDESTE,
+                Defs.POSICAO_SUL + Defs.POSICAO_SUDOESTE,
+                Defs.POSICAO_OESTE + Defs.POSICAO_SUDOESTE,
+                Defs.POSICAO_OESTE + Defs.POSICAO_NOROESTE
+            };
+            /// <summary>
+            /// Movimentos do Rei.
+            /// </summary>
+            public static readonly int[] REI = {
+                Defs.POSICAO_NORTE,
+                Defs.POSICAO_NORDESTE,
+                Defs.POSICAO_LESTE,
+                Defs.POSICAO_SUDESTE,
+                Defs.POSICAO_SUL,
+                Defs.POSICAO_SUDOESTE,
+                Defs.POSICAO_OESTE,
+                Defs.POSICAO_NOROESTE
+            };
+            /// <summary>
+            /// Movimentos da Torre.
+            /// </summary>
+            public static readonly int[] TORRE = {
+                Defs.POSICAO_NORTE,
+                Defs.POSICAO_LESTE,
+                Defs.POSICAO_SUL,
+                Defs.POSICAO_OESTE
+            };
+            /// <summary>
+            /// Movimentos do Bispo.
+            /// </summary>
+            public static readonly int[] BISPO = {
+                Defs.POSICAO_NORDESTE,
+                Defs.POSICAO_SUDESTE,
+                Defs.POSICAO_SUDOESTE,
+                Defs.POSICAO_NOROESTE
+            };
+        }
 
         public const sbyte BORDA = 10;          // Border
         public const sbyte CASA_VAZIA = 0;      // Empty Square
 
+        // Definições das peças para o tabuleiro.
         public const sbyte PEAO_BRANCO = 1;     // White Pawn
         public const sbyte PEAO_PRETO = -1;     // Black Pawn
         public const sbyte CAVALO_BRANCO = 2;   // White Knight
@@ -85,10 +110,14 @@ namespace Enxadrista
 
         public const sbyte PECA_NENHUMA = 0;
 
+        // Definições para cores.
         public const sbyte COR_BRANCA = 1;
         public const sbyte COR_PRETA = -1;
         public const sbyte COR_NENHUMA = 0;
 
+        /// <summary>
+        /// Coordenadas das posições do tabuleiro para imprimir.
+        /// </summary>
         public static readonly string[] COORDENADAS = {
             "", "",   "",   "",   "",   "",   "",   "",  "",   "",  "", "",
             "", "",   "",   "",   "",   "",   "",   "",  "",   "",  "", "",
@@ -119,7 +148,7 @@ namespace Enxadrista
         };
 
         /// <summary>
-        /// Número máximo de movimentos que podemos executar durante a procura.
+        /// Número máximo de movimentos que podemos executar durante a pesquisa.
         /// </summary>
         public const int NIVEL_MAXIMO = 128;
 
@@ -139,11 +168,18 @@ namespace Enxadrista
         public const int VALOR_MAXIMO = 32767;
 
         /// <summary>
-        /// Valor do mate.
+        /// Valor do xeque mate.
         /// </summary>
         public const int VALOR_MATE = 30000;
 
+        /// <summary>
+        /// valor mínimo de avaliação.
+        /// </summary>
         public const int AVALIACAO_MINIMA = -10000;
+
+        /// <summary>
+        /// Valor máximo da avaliação.
+        /// </summary>
         public const int AVALIACAO_MAXIMA = 10000;
 
         /// <summary>
@@ -151,22 +187,33 @@ namespace Enxadrista
         /// </summary>
         public const int PROFUNDIDADE_MAXIMA = 64;
         
-        public static char Representacao(sbyte elemento_do_tabuleiro)
+        /// <summary>
+        /// Letra do elemento do tabuleiro.
+        /// </summary>
+        /// <param name="elemento_do_tabuleiro"></param>
+        /// <returns></returns>
+        public static char Letra(sbyte elemento_do_tabuleiro)
         {
             if (elemento_do_tabuleiro == BORDA) return '-';
 
             int valor = Math.Abs(elemento_do_tabuleiro);
             if (valor >= 0 && valor <= 6)
             {
-                char item = " PNBRQK".ElementAt(valor);
-                if (elemento_do_tabuleiro < 0) item = Char.ToLower(item);
-                return item;
+                var letra = " PNBRQK".ElementAt(valor);
+                if (elemento_do_tabuleiro < 0) letra = Char.ToLower(letra);
+                return letra;
             }
                         
             return '?'; // nao deveria chegar aqui.
         }
 
-        public static int ConvertePara12x12(int indice)
+
+        /// <summary>
+        /// Conversão de coordenadas.
+        /// </summary>
+        /// <param name="indice">Índice de coordenada 8x8.</param>
+        /// <returns>Índice de coordenada 12x12</returns>
+        public static int Converte8x8Para12x12(int indice)
         {
             Debug.Assert(indice >= 0 && indice <= Defs.INDICE_MAXIMO);
 
@@ -176,7 +223,12 @@ namespace Enxadrista
             return (fileira - Defs.PRIMEIRA_FILEIRA) * 8 + coluna - Defs.PRIMEIRA_COLUNA;
         }
 
-        public static int ConvertePara8x8(int indice)
+        /// <summary>
+        /// Conversão de coordenadas.
+        /// </summary>
+        /// <param name="indice">Índice de coordenada 12x12.</param>
+        /// <returns>Índice de coordenada 8x8</returns>
+        public static int Converte12x12Para8x8(int indice)
         {
             Debug.Assert(indice >= 0 && indice <= Defs.INDICE_MAXIMO);
 
@@ -222,21 +274,41 @@ namespace Enxadrista
             return (indice >= (int)Defs.INDICE.A8 && indice <= (int)Defs.INDICE.H1) ? Defs.COORDENADAS[indice].ToLower() : "-";
         }
 
+        /// <summary>
+        /// Indica se o índice está na fileira de promoção branca (A8 a H8).
+        /// </summary>
+        /// <param name="indice">Índice da casa.</param>
+        /// <returns>Verdadeiro para índice entre A8 e H8.</returns>
         public static bool FileiraPromocaoBranco(int indice)
         {
             return indice >= (int)Defs.INDICE.A8 && indice <= (int)Defs.INDICE.H8;
         }
 
+        /// <summary>
+        /// Indica se o índice está na fileira de promoção preta (A1 a H1).
+        /// </summary>
+        /// <param name="indice">Índice da casa.</param>
+        /// <returns>Verdadeiro para índice entre A1 e H1.</returns>
         public static bool FileiraPromocaoPreto(int indice)
         {
             return indice >= (int)Defs.INDICE.A1 && indice <= (int)Defs.INDICE.H1;
         }
 
+        /// <summary>
+        /// Indica se o índice está na primeira fileira peões brancos (A2 a H2).
+        /// </summary>
+        /// <param name="indice">Índice da casa.</param>
+        /// <returns>Verdadeiro para índice entre A2 e H2.</returns>
         public static bool PrimeiraFileiraPeaoBranco(int indice)
         {
             return indice >= (int)Defs.INDICE.A2 && indice <= (int)Defs.INDICE.H2;
         }
 
+        /// <summary>
+        /// Indica se o índice está na primeira fileira de peões pretos (A7 a H7).
+        /// </summary>
+        /// <param name="indice">Índice da casa.</param>
+        /// <returns>Verdadeiro para índice entre A7 e H7.</returns>
         public static bool PrimeiraFileiraPeaoPreto(int indice)
         {
             return indice >= (int)Defs.INDICE.A7 && indice <= (int)Defs.INDICE.H7;

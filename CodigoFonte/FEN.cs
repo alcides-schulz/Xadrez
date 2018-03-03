@@ -136,7 +136,7 @@ namespace Enxadrista
                         desc += contador_casas_vazias.ToString();
                         contador_casas_vazias = 0;
                     }
-                    desc += Defs.Representacao(peca);
+                    desc += Defs.Letra(peca);
                 }
                 if (contador_casas_vazias != 0) {
                     desc += contador_casas_vazias.ToString();

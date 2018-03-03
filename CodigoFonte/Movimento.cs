@@ -88,7 +88,7 @@ namespace Enxadrista
 
             s += Defs.COORDENADAS[IndiceOrigem];
             s += Defs.COORDENADAS[IndiceDestino];
-            if (Promocao()) s += Defs.Representacao(PecaPromocao);
+            if (Promocao()) s += Defs.Letra(PecaPromocao);
 
             return s.ToLower();
         }
@@ -124,7 +124,7 @@ namespace Enxadrista
             s += Defs.COORDENADAS[IndiceOrigem];
             s += Captura() ? "x" : "-";
             s += Defs.COORDENADAS[IndiceDestino];
-            if (Promocao()) s += Defs.Representacao(PecaPromocao);
+            if (Promocao()) s += Defs.Letra(PecaPromocao);
 
             return s.ToLower();
         }

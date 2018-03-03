@@ -35,7 +35,7 @@ namespace Enxadrista
             if (movimento.Tatico()) return;
 
             int indice_peca = IndicePeca(cor, movimento.Peca);
-            int indice_casa = Defs.ConvertePara8x8(movimento.IndiceDestino);
+            int indice_casa = Defs.Converte12x12Para8x8(movimento.IndiceDestino);
 
             Tabela[indice_peca][indice_casa] += profundidade;
 
@@ -61,7 +61,7 @@ namespace Enxadrista
                     continue;
                 }
                 int indice_peca = IndicePeca(cor, movimento.Peca);
-                int indice_casa = Defs.ConvertePara8x8(movimento.IndiceDestino);
+                int indice_casa = Defs.Converte12x12Para8x8(movimento.IndiceDestino);
                 movimento.ValorOrdenacao = Tabela[indice_peca][indice_casa];
             }
 
