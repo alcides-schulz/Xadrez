@@ -1,12 +1,6 @@
+Enxadrista - Motor de Xadrez
+----------------------------
 
-  ______                     _      _     _        
- |  ____|                   | |    (_)   | |       
- | |__   _ __ __  ____ _  __| |_ __ _ ___| |_ __ _ 
- |  __| | '_ \\ \/ / _` |/ _` | '__| / __| __/ _` |
- | |____| | | |>  < (_| | (_| | |  | \__ \ || (_| |
- |______|_| |_/_/\_\__,_|\__,_|_|  |_|___/\__\__,_|
-                                                   
-                                                   
 Alcides Schulz - 2018
 
 Enxadrista é um programa que joga xadrez. Normalmente este tipo de programa
