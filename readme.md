@@ -20,6 +20,6 @@ Vou responder o melhor que puder.
 
 Um abraço.
 
-Alcides Schulz - autor do programa tucano.
+Alcides Schulz - autor do programa Tucano.
 email: alcides_schulz@hotmail.com
 site: https://sites.google.com/site/tucanochess/
