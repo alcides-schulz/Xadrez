@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Enxadrista
 {
+    /// <summary>
+    /// Mantém as informações da história do tabuleiro depois que os movimentos são feitos.
+    /// </summary>
     public class Historia
     {
         public Movimento Movimento;
@@ -17,6 +20,12 @@ namespace Enxadrista
         public int IndiceEnPassant;
         public ulong Chave;
 
+        /// <summary>
+        /// Salva informações sobre o tabuleiro de xadrez.
+        /// </summary>
+        /// <param name="tabuleiro">Tabuleiro</param>
+        /// <param name="movimento">Movimento</param>
+        /// <see cref="Tabuleiro.FazMovimento(Movimento)"/>
         public void Salva(Tabuleiro tabuleiro, Movimento movimento)
         {
             Movimento = movimento;
@@ -29,6 +38,11 @@ namespace Enxadrista
             Chave = tabuleiro.Chave;
         }
 
+        /// <summary>
+        /// Restaura informações para o tabuleiro
+        /// </summary>
+        /// <param name="tabuleiro">Tabuleiro.</param>
+        /// <see cref="Tabuleiro.DesfazMovimento"/>
         public void Restaura(Tabuleiro tabuleiro)
         {
             tabuleiro.RoqueE1G1 = RoqueE1G1;
