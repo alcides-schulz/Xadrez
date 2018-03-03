@@ -10,6 +10,7 @@ namespace Enxadrista
     /// FEN é um padrão para representar uma posição do jogo.
     /// </summary>
     /// <remarks>
+    /// 
     /// https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     /// 
     /// A descrição FEN é em inglês. As peças sao representadas assim:
@@ -24,7 +25,8 @@ namespace Enxadrista
     /// Por exemplo: a posição inicial é representada por este FEN:
     ///    rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     ///    
-    /// A vantagem de usar FEN é que este é um padrão que a maioria dos softwares de xadrez usa.
+    /// A vantagem de usar FEN é que este é um padrão usado pela maioria dos softwares de xadrez.
+    /// 
     /// </remarks>
     public class FEN
     {
@@ -89,26 +91,14 @@ namespace Enxadrista
         /// <returns>string FEN</returns>
         public static string ConverteTabuleiroParaFEN(Tabuleiro tabuleiro)
         {
-            return ConverteTabuleiroParaFEN(tabuleiro, true, true);
-        }
-
-        /// <summary>
-        /// Gera uma string FEN representando a posição atual no tabuleiro.
-        /// </summary>
-        /// <param name="tabuleiro">tabuleiro com a posição para gerar a string FEN</param>
-        /// <param name="include_regra50">inclui contador de regra 50</param>
-        /// <param name="include_contador">inclui contador de movimentos</param>
-        /// <returns></returns>
-        public static string ConverteTabuleiroParaFEN(Tabuleiro tabuleiro, bool include_regra50, bool include_contador)
-        {
             string fen = "";
 
             fen += FEN.ObtemDescPosicao(tabuleiro);
             fen += " " + (tabuleiro.CorJogar == Defs.COR_BRANCA ? "w" : "b");
             fen += " " + FEN.ObtemDescRoque(tabuleiro);
             fen += " " + Defs.ObtemDescCasa(tabuleiro.IndiceEnPassant);
-            if (include_regra50) fen += " " + tabuleiro.ContadorRegra50.ToString();
-            if (include_contador) fen += " " + tabuleiro.ContadorMovimentos.ToString();
+            fen += " " + tabuleiro.ContadorRegra50.ToString();
+            fen += " " + tabuleiro.ContadorMovimentos.ToString();
 
             return fen;
         }
@@ -121,7 +111,7 @@ namespace Enxadrista
         /// <returns>Descrição FEN das peças no tabuleiro</returns>
         private static string ObtemDescPosicao(Tabuleiro tabuleiro)
         {
-            string desc = "";
+            var desc = "";
 
             for (int fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++) {
                 if (desc != "") desc += "/";
