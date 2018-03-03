@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Enxadrista
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Motor
     {
         public Tabuleiro Tabuleiro;
