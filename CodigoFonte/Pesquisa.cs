@@ -203,6 +203,17 @@ namespace Enxadrista
                 if (valor <= alfa_reduzido) return valor;
             }
 
+            // Este é o famoso movimento nulo (movimento nulo). Praticamente todos os motores de xadrez o implementam.
+            // A idéia é que você está em uma posição que é tão boa (valor maior do que beta) que mesmo se você passar
+            // o direito de mover para o outro jogador, dando-lhe dois movimentos em sequência, ele não será capaz de recuperar.
+            // Então, você pode descartar essa pesquisa. É um bom ganho.
+            // Existem algumas boas práticas para movimentos nulos:
+            // - Não faça dois movimentos nulos em seqüência.
+            // - Não pode estar no xeque, pois pode gerar posições ilegais.
+            // - É bom que você tenha algumas peças.
+            // - Também não é recomendado para pesquisa de variação principal.
+            // O movimento nulo deve ser confirmado com uma busca reduzida.
+            // O valor obtido pode ser salvo na tabela de transposição.
             if (profundidade > 3 && !cor_jogar_esta_em_cheque && alfa == beta - 1 && valor_avaliacao >= beta) { 
                 if (!Tabuleiro.MovimentoAnteriorFoiNulo() && Tabuleiro.TemPecas(Tabuleiro.CorJogar)) {
                     Tabuleiro.FazMovimentoNulo();
@@ -210,23 +221,28 @@ namespace Enxadrista
                     Tabuleiro.DesfazMovimentoNulo();
                     if (EncerraProcura) return 0;
                     if (valor >= beta) {
-                        if (valor > Defs.AVALIACAO_MAXIMA) valor = beta;
+                        if (valor > Defs.AVALIACAO_MAXIMA) valor = beta; // // Valor de mate, não muito confiável neste caso.
                         Transposicao.Salva(Tabuleiro.Chave, profundidade, valor, nivel, Transposicao.REGISTRO_INFERIOR, null);
                         return valor;
                     }
                 }
             }
 
+            // Prepara a próxima profundidade. Se estiver em xeque, estendemos a pesquisa.
+            // Esta é uma extensão de xeque simples, pode ser implementada em diferentes formas.
+            int nova_profundidade = profundidade - 1;
+            if (cor_jogar_esta_em_cheque) nova_profundidade += 1;
+
+            // Mais itens de controle de pesquisa.
             int melhor_valor = Defs.VALOR_MINIMO;
             int contador_movimentos = 0;
             Movimento melhor_movimento = null;
 
-            int nova_profundidade = profundidade - 1;
-            if (cor_jogar_esta_em_cheque) nova_profundidade += 1;
-
+            // Gera e classifica a lista de movimentos. Usa o movimento da tabela de transposição, se disponível.
             var lista = Tabuleiro.GeraMovimentos();
             lista = Ordenacao.Orderna(Tabuleiro.CorJogar, lista, movimento_transposicao);
 
+            // Loop dos movimentos.
             foreach (var movimento in lista) {
                 Tabuleiro.FazMovimento(movimento);
                 if (!Tabuleiro.MovimentoFeitoLegal()) {
@@ -237,32 +253,61 @@ namespace Enxadrista
 
                 contador_movimentos += 1;
 
+                // Início da pesquisa recursiva. O objectivo é obter o valor para esta posição nesta profundidade.
                 int valor_procura = 0;
                 if (melhor_valor == Defs.VALOR_MINIMO) {
+                    // O primeiro movimento será pesquisado com o tamanho da janela inteira, ou seja, os valores alfa / beta invertidos.
                     valor_procura = -AlfaBeta(-beta, -alfa, nivel + 1, nova_profundidade, nova_variacao_principal);
+                    // Os movimentos seguintes são pesquisados com uma pesquisa de janela zero. Em vez de usar -beta, -alfa para a 
+                    // janela de pesquisa, usaremos -alfa-1, -alfa. Isso deve descartar mais movimentos porque os valores 
+                    // alfa / beta da próxima iteração serão próximos. Mas antes podemos aplicar algumas técnicas para reduzir a 
+                    // quantidade de movimentos pesquisados. Veja abaixo na parte do "else".
                 }
                 else {
+                    // Poda de futilidade - Futility Pruning.
+                    // Se o valor da avaliação mais um valor estimado for inferior ao valor alfa, podemos ignorar esse movimento.
+                    // Mas temos que considerar algumas restrições como abaixo. Existem muitas maneiras diferentes de implementar 
+                    // esta técnica, mais uma vez você pode ajustar de acordo com sua preferência e se ela funcionar para o seu motor. 
                     if (!cor_jogar_esta_em_cheque && nova_profundidade == 1 && !movimento.Tatico() && alfa == beta - 1 && valor_avaliacao + 100 < alfa) {
                         Tabuleiro.DesfazMovimento();
                         continue;
                     }
+
+                    // Redução de movimento tardios - Late move reduction ou LMR.
+                    // Para movimentos que estão mais próximos do fim da lista, podemos reduzir a profundidade em que são pesquisados. 
+                    // Esta técnica também pode ser adaptada de muitas formas diferentes.
                     int reducao = 0;
                     if (!cor_jogar_esta_em_cheque && nova_profundidade > 1 && contador_movimentos > 4 && !movimento.Tatico() && alfa == beta - 1 && valor_avaliacao < alfa) {
                         reducao = 1;
                     }
+
+                    // Outras técnicas de conhecimento podem ser aplicadas aqui. E talvez você possa criar uma nova técnica!
+
+                    // Executa a pesquisa de janela zero.
                     valor_procura = -AlfaBeta(-alfa - 1, -alfa, nivel + 1, nova_profundidade - reducao, nova_variacao_principal);
+
+                    // Quando a busca foi reduzida e o valor retornado é maior do que o alfa, significa que podemos ter um bom
+                    // movimento, e temos que pesquisar sem a redução para confirmar. Esperava-se que não tivesse um bom movimento
+                    // neste caso.
                     if (!EncerraProcura && valor_procura > alfa && reducao != 0) {
                         valor_procura = -AlfaBeta(-alfa - 1, -alfa, nivel + 1, nova_profundidade, nova_variacao_principal);
                     }
+
+                    // Este é outro caso de re-pesquisa, depois de pesquisar com janela zero. Esperava-se não encontrar bons movimentos 
+                    // neste caso. Se o valor retornado for maior que o alfa, significa que devemos pesquisar novamente com a janela 
+                    // completa, para confirmar o movimento bom.
                     if (!EncerraProcura && valor_procura > alfa && valor_procura < beta) {
                         valor_procura = -AlfaBeta(-beta, -alfa, nivel + 1, nova_profundidade, nova_variacao_principal);
                     }
+                    // Nota: Pode parecer que o motor pode pesquisar a mesma posição duas vezes, mas se você seguir a lógica acima, 
+                    // será uma ou outra.
                 }
 
                 Tabuleiro.DesfazMovimento();
                 if (EncerraProcura) return 0;
                 Debug.Assert(Tabuleiro.Chave == Zobrist.ObtemChave(Tabuleiro));
 
+                // 
                 if (valor_procura >= beta) {
                     Ordenacao.AtualizaHistoria(Tabuleiro.CorJogar, movimento, profundidade);
                     Transposicao.Salva(Tabuleiro.Chave, profundidade, valor_procura, nivel, Transposicao.REGISTRO_INFERIOR, movimento);
