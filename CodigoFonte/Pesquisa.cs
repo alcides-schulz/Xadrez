@@ -11,15 +11,32 @@ namespace Enxadrista
     /// Esta é a parte que coordena os componentes do motor de xadrez para encontrar o melhor movimento.
     /// Usa o tabuleiro para fazer e desfazer movimentos, usa a avaliação para dar valor às posições e 
     /// seleciona o melhor movimento resultante desse processo.
-    /// 
+    /// Basicamente, é assim que funciona, digamos que começamos com o branco para jogar, o algoritmo mantém 
+    /// dois valores, alfa e beta, que representam a pontuação mínima que o jogador maximizador (branco) é 
+    /// assegurado e a pontuação máxima que o jogador minimizador ( preto) é assegurada, respectivamente. 
+    /// Inicialmente, o alfa é o infinito negativo e o beta é o infinito positivo, ou seja, ambos os jogadores 
+    /// começam com o seu pior resultado possível. Sempre que a pontuação máxima que o jogador minimizador (balck)
+    /// garanta seja menor do que a pontuação mínima que o jogador maximizador (branco) é assegurado, 
+    /// ou seja, beta menor ou igual a alfa, o jogador maximizador (branco) não precisa considerar os 
+    /// descendentes de este nó, pois nunca serão alcançados na jogada real. Este é o corte beta e é um dos 
+    /// principais objetivos da pesquisa, porque evitamos procura posições menos importantes.
+    /// Este processo irá se repetir recursivamente invertendo os jogadores e os valores alfa e beta.
+    /// É um pouco complicado, requer algum tempo para estudar e entender, mas depois de algum tempo você deve 
+    /// pegar o jeito. Eu recomendo olhar para a implementação dos motores de xadrez escritos mais recentes, 
+    /// a implementação é mais limpa do que os motores antigos. Eu tentei manter a pesquisa do Enxadrista 
+    /// o mais simples possível.
+    /// A pesquisa inicia no método LoopAprofundamentoIterativo.
     /// </remarks>
+    /// <see cref="LoopAprofundamentoIterativo(int, int)"/>
     public class Pesquisa
     {
+        // Componentes do motor necessários para a pesquisa.
         public Tabuleiro Tabuleiro;
         public Avaliacao Avaliacao;
         public Transposicao Transposicao;
         public Ordenacao Ordenacao = new Ordenacao();
 
+        // Dados usados para controlar a pesquisa.
         public bool ImprimeInformacao = true;
         public ulong ContadorPosicoes = 0;
         public bool EncerraProcura = false;
@@ -27,9 +44,14 @@ namespace Enxadrista
         public int ProfundidadeLimite = 0;
         public int ProfundidadeAtual = 0;
         public Movimento MelhorMovimento = null;
-
         private Stopwatch ControleTempo = new Stopwatch();
 
+        /// <summary>
+        /// Cria componente the pesquisa e associa aos outros componentes do motor.
+        /// </summary>
+        /// <param name="tabuleiro">Tablueiro.</param>
+        /// <param name="avaliacao">Avaliação.</param>
+        /// <param name="transposicao">Tabela de Transposição.</param>
         public Pesquisa(Tabuleiro tabuleiro, Avaliacao avaliacao, Transposicao transposicao)
         {
             Transposicao = transposicao;
@@ -37,7 +59,31 @@ namespace Enxadrista
             Avaliacao = avaliacao;
         }
 
-        public void LoopAprofundamentoInterativo(int milisegundo_limite, int profundidade_limite)
+        /// <summary>
+        /// Inicia uma nova pesquisa para a posição atual no tabuleiro, e encontra o melhor 
+        /// movimento para o jogador na vez.
+        /// O movimento encontrado será salvo em MelhorMovimento.
+        /// </summary>
+        /// <remarks>
+        /// Este processe repete a pesquisa incrementando a profundidade a cada iteração.
+        /// Sim, é exatamente como você leu. Vamos procurar com depth = 1, depois repetir com depth = 2,
+        /// repetir com depth = 3 e assim por diante. Pode parecer ineficiente, mas cada iteração usará
+        /// informações coletadas na iteração anterior e acelera a proxima iteração.
+        /// Esta repetição será limitada por tempo ou profundidade. Então, verificaremos o fim da pesquisa 
+        /// durante o processo.
+        /// Algo que pode melhorar aqui, é usar um controle de tempo melhor, onde você aloca mais ou menos
+        /// tempo com base no estágio do jogo, ou estende se o movimento retornou uma pontuação ruim, etc.
+        /// O gerenciamento de tempo é um capítulo a parte para motores de xadrez. É como um jogador de xadrez
+        /// vai alocar mais tempo para avaliar movimentos importantes.
+        /// Note que aqui recebemos o tempo limite já calculado, o gerenciamento de tempo deve ser feito 
+        /// antes de entrar na pesquisa, e pode ser ajustado de acordo com desenrolar da pesquisa.
+        /// Outra técnica é a janela de aspiração, onde você pode começar com pequenas janelas e ampliar,
+        /// conforme necessário, isso deve economizar tempo porque você não pesquisa as posições com valores
+        /// fora da janela. A janela de pesquisa é definida pelo intervalo entre os valores de alfa e beta.
+        /// </remarks>
+        /// <param name="milisegundo_limite">Tempo limite para a pesquisa em milisegundos.</param>
+        /// <param name="profundidade_limite">Profundidade limite para a pesquisa.</param>
+        public void LoopAprofundamentoIterativo(int milisegundo_limite, int profundidade_limite)
         {
             Debug.Assert(milisegundo_limite >= 0);
             Debug.Assert(profundidade_limite > 0 && profundidade_limite <= Defs.PROFUNDIDADE_MAXIMA);
@@ -52,25 +98,48 @@ namespace Enxadrista
             ProfundidadeLimite = profundidade_limite;
             EncerraProcura = false;
             MelhorMovimento = null;
+
             var variacao_principal = new List<Movimento>();
 
             for (ProfundidadeAtual = 1; ProfundidadeAtual <= Defs.PROFUNDIDADE_MAXIMA; ProfundidadeAtual++) {
                 AlfaBeta(Defs.VALOR_MINIMO, Defs.VALOR_MAXIMO, 0, ProfundidadeAtual, variacao_principal);
-                //Console.Write("PA: " + ProfundidadeAtual + " GC:" + GC.GetTotalMemory(false));
-                //Console.WriteLine(" AFTER:" + GC.GetTotalMemory(false));
                 if (EncerraProcura) break;
+                // Não inicia um novo loop se já usamos 60% do tempo disponível. É provável que não possamos terminar.
                 if (ControleTempo.ElapsedMilliseconds > (int)(MilisegundosLimite * 0.60)) break;
-
+                // Libera memoria aos poucos. Provavelmente esta parte pode ser melhorada.
                 GC.Collect();
             }
 
             ControleTempo.Stop();
 
             MelhorMovimento = variacao_principal.Count > 0 ? variacao_principal[0] : null;
-
-            //Console.WriteLine(TabelaMelhores.Count);
         }
 
+        /// <summary>
+        /// Executa a pesquisa alfa beta.
+        /// </summary>
+        /// <remarks>
+        /// Essa função deve ser a mais executada para o motor de xadrez. A maior parte da diversão 
+        /// acontece aqui, o que significa que há muitas técnicas que podem ser tentadas.
+        /// Vamos comentar as técnicas diretamente no código abaixo, mas a idéia geral é passar mais
+        /// tempo procurando movimentos promissores e passar menos tempo buscando possíveis movimentos
+        /// ruins.
+        /// A busca às vezes descarta alguns movimentos, e às vezes estende outros. Por exemplo, estender
+        /// a busca por um movimento de xeque é geralmente bom. Evitar pesquisar movimentos no final da 
+        /// lista de movimentos também é geralmente bom.
+        /// Há sempre algumas idéias que podem ser tentadas, quando você no código de outros motores você
+        /// pode obter alguma inspiração para suas próprias idéias e tentar no seu programa. A maioria das
+        /// ideias em outros motores tem que ser adaptada ao seu programa, às vezes eles simplesmente não
+        /// funcionam, porque seu programa possui uma estrutura diferente. 
+        /// E um ponto importante, que é considerado cortesia, quando você menciona de onde você teve a
+        /// idéia / inspiração. 
+        /// </remarks>
+        /// <param name="alfa">Limite inferior da pesquisa.</param>
+        /// <param name="beta">Limite superior da pesquisa.</param>
+        /// <param name="nivel">Distância da posição inicial (conhecido como ply). Aumentada a cada chamada.</param>
+        /// <param name="profundidade">Profundidade da pesquisa (depth), número de movimentos para olhar a frente. Diminui a cada chamada.</param>
+        /// <param name="variacao_principal">Lista dos melhores movimentos localizados durante a pesquisa.</param>
+        /// <returns>Melhor valor encontrado para a posição.</returns>
         public int AlfaBeta(int alfa, int beta, int nivel, int profundidade, List<Movimento> variacao_principal)
         {
             Debug.Assert(alfa >= Defs.VALOR_MINIMO);
@@ -80,20 +149,35 @@ namespace Enxadrista
             Debug.Assert(profundidade >= 0 && profundidade <= Defs.PROFUNDIDADE_MAXIMA);
             Debug.Assert(variacao_principal != null);
 
+            // Final da pesquisa por causa do tempo ou profundidade ?
+            VerificaTerminoProcura();
+            if (EncerraProcura) return 0;
+
+            // Chegamos a uma posição que é empate por causa das regras do xadrez. 
             if (nivel > 0 && Tabuleiro.EmpatePorRegra50()) return 0;
             if (nivel > 0 && Tabuleiro.EmpatePorRepeticao()) return 0;
 
+            // Ao chegar ao final da pesquisa, vai para a pesquisa quiesce para obter o resultado final.
             if (profundidade <= 0) return Quiescente(alfa, beta, nivel, variacao_principal);
 
-            VerificaTerminoProcura();
-            if (EncerraProcura) return 0;
+            // Contador de posição. Apenas para fins informativos, para que você veja o quão rápido é o seu motor. 
             ContadorPosicoes++;
+
+            // Prepara lista the movimentos encontrados.
             if (nivel > 0) variacao_principal.Clear();
 
+            // Programação defensiva para evitar erros de tabela.
             if (nivel > Defs.NIVEL_MAXIMO - 1) return Avaliacao.ObtemPontuacao();
 
+            // Accesso a informações da tabela de transposição (Transposition Table Probe).
+            // Nota: alguns programas usam Hash Table ao inves the Transposition Table.
+            // Se esta posição foi visitada antes, a pontuação pode estar na tabela de transposição,
+            // podemos reutilizá-la e retornar daqui. Esta é uma grande economia.
+            // Esta informação será salva durante a pesquisa, quando tivermos a informação sobre a pontuação.
+            // É importante usar o valor somente se a profundidade na tabela for maior ou igual à profundidade atual.
+            // Se não podemos usar a pontuação, podemos usar o melhor movimento, que pode causar um corte beta e 
+            // também economizar tempo. Lembre-se de que isso ajuda na ordenação do movimentos.
             Movimento movimento_transposicao = null;
-
             var registro = Transposicao.Recupera(Tabuleiro.Chave, profundidade);
             if (registro != null) {
                 if (registro.PodeUsarValor(alfa, beta)) {
@@ -102,13 +186,20 @@ namespace Enxadrista
                 movimento_transposicao = registro.Movimento;
             }
 
+            // Preparação de informações para a pesquisa.
             var cor_jogar_esta_em_cheque = Tabuleiro.CorJogarEstaEmCheque();
             var valor_avaliacao = Avaliacao.ObtemPontuacao();
             var nova_variacao_principal = new List<Movimento>();
 
+            // "Passar a navalha" (Razoring).
+            // Talvez a tradução de razoring não seja boa, mas aqui vamos tentar remover posições 
+            // que não são muito promissoras, com uma busca reduzida. Vamos tentar passar a navalha nessas posições !
+            // O valor de avaliação mais um valor estimado já é menor do que o alfa, então, se a busca reduzida
+            // confirmar que não há uma boa captura, podemos descartar essa posição e ignorar a pesquisa.
             if (profundidade <= 3 && !cor_jogar_esta_em_cheque && valor_avaliacao + 150 * profundidade < alfa) {
                 int alfa_reduzido = alfa - 150 * profundidade;
                 int valor = Quiescente(alfa_reduzido, alfa_reduzido + 1, nivel, nova_variacao_principal);
+                if (EncerraProcura) return 0;
                 if (valor <= alfa_reduzido) return valor;
             }
 

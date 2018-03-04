@@ -52,7 +52,7 @@ namespace Enxadrista
 
         private void ProcuraMovimento()
         {
-            Motor.Pesquisa.LoopAprofundamentoInterativo(MilisegundosPorMovimento, ProfundidadeMaxima);
+            Motor.Pesquisa.LoopAprofundamentoIterativo(MilisegundosPorMovimento, ProfundidadeMaxima);
             if (Motor.Pesquisa.MelhorMovimento != null) {
                 Motor.Tabuleiro.FazMovimento(Motor.Pesquisa.MelhorMovimento);
                 Console.WriteLine("move " + Motor.Pesquisa.MelhorMovimento.Notacao());
