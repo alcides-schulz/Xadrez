@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace Enxadrista
 {
+    /// <summary>
+    /// Funcionalidade para encontrar o melhor movimento.
+    /// </summary>
+    /// <remarks>
+    /// Esta é a parte que coordena os componentes do motor de xadrez para encontrar o melhor movimento.
+    /// Usa o tabuleiro para fazer e desfazer movimentos, usa a avaliação para dar valor às posições e 
+    /// seleciona o melhor movimento resultante desse processo.
+    /// 
+    /// </remarks>
     public class Pesquisa
     {
         public Tabuleiro Tabuleiro;
