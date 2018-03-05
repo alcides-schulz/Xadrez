@@ -157,7 +157,7 @@ namespace Enxadrista
             if (nivel > 0 && Tabuleiro.EmpatePorRegra50()) return 0;
             if (nivel > 0 && Tabuleiro.EmpatePorRepeticao()) return 0;
 
-            // Ao chegar ao final da pesquisa, vai para a pesquisa quiesce para obter o resultado final.
+            // Ao chegar ao final da pesquisa, vai para a pesquisa quiescente para obter o resultado final.
             if (profundidade <= 0) return Quiescente(alfa, beta, nivel, variacao_principal);
 
             // Contador de posição. Apenas para fins informativos, para que você veja o quão rápido é o seu motor. 
@@ -166,7 +166,7 @@ namespace Enxadrista
             // Prepara lista the movimentos encontrados.
             if (nivel > 0) variacao_principal.Clear();
 
-            // Programação defensiva para evitar erros de tabela.
+            // Programação defensiva para evitar erros de índice fora da faixa da tabela.
             if (nivel > Defs.NIVEL_MAXIMO - 1) return Avaliacao.ObtemPontuacao();
 
             // Accesso a informações da tabela de transposição (Transposition Table Probe).
@@ -253,7 +253,7 @@ namespace Enxadrista
 
                 contador_movimentos += 1;
 
-                // Início da pesquisa recursiva. O objectivo é obter o valor para esta posição nesta profundidade.
+                // Início da pesquisa recursiva. O objectivo é obter o valor para este movimento nesta profundidade.
                 int valor_procura = 0;
                 if (melhor_valor == Defs.VALOR_MINIMO) {
                     // O primeiro movimento será pesquisado com o tamanho da janela inteira, ou seja, os valores alfa / beta invertidos.
@@ -307,13 +307,19 @@ namespace Enxadrista
                 if (EncerraProcura) return 0;
                 Debug.Assert(Tabuleiro.Chave == Zobrist.ObtemChave(Tabuleiro));
 
-                // 
+                // Agora que temos o valor para este movimento nesta posição, podemos comparar a alfa e beta tomar decisões.
+                // Se o valor for maior que o beta, temos um corte beta. Isso significa que não precisamos pesquisar o resto dos
+                // movimentos. O objetivo é obter muitos cortes beta, especialmente no primeiro movimento.
+                // É importante atualizar o histórico de movimentos e a tabela de transposição, então quando pesquisamos essa
+                // posição novamente, possivelmente também podemos ter outro corte beta.
                 if (valor_procura >= beta) {
                     Ordenacao.AtualizaHistoria(Tabuleiro.CorJogar, movimento, profundidade);
                     Transposicao.Salva(Tabuleiro.Chave, profundidade, valor_procura, nivel, Transposicao.REGISTRO_INFERIOR, movimento);
                     return valor_procura;
                 }
 
+                // Se não tivermos um corte beta, temos que gravar o melhor resultado até agora, e aumentar o valor da alfa. Isso significa 
+                // que temos uma boa jogada para o cargo, e podemos atualizar a variação principal.
                 if (valor_procura > melhor_valor) {
                     melhor_valor = valor_procura;
                     if (valor_procura > alfa) {
@@ -325,9 +331,16 @@ namespace Enxadrista
                 }
             }
 
+            // Acabamos de pesquisar todos movimentos. Precisamos fazer mais alguns passos.
+
+            // Se todos os movimentos forem ilegais, significa que não podemos mover nessa posição.
+            // Se o nosso rei estiver em xeque, então é xeque mate, esta posição está perdida, e nós retornamos uma pontuação de xeque.
+            // Se o nosso rei não estiver em xeque, então é empate. Não podemos fazer um movimento sem colocar o rei no xeque.
             if (melhor_valor == Defs.VALOR_MINIMO)
                 return cor_jogar_esta_em_cheque ? -Defs.VALOR_MATE + nivel : 0;
 
+            // Aqui vamos atualizar o histórico de movimentos e a tabela de transposição de acordo com o escore.
+            // Podemos encontrar uma bom movimento, ou nenhum movimento foi capaz de melhorar alfa.
             if (melhor_movimento != null) {
                 Ordenacao.AtualizaHistoria(Tabuleiro.CorJogar, melhor_movimento, profundidade);
                 Transposicao.Salva(Tabuleiro.Chave, profundidade, melhor_valor, nivel, Transposicao.REGISTRO_EXATO, melhor_movimento);
@@ -336,6 +349,7 @@ namespace Enxadrista
                 Transposicao.Salva(Tabuleiro.Chave, profundidade, melhor_valor, nivel, Transposicao.REGISTRO_SUPERIOR, null);
             }
 
+            // Retorna o valor da posição.
             return melhor_valor;
         }
 
