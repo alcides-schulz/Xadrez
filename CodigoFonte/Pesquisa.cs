@@ -153,6 +153,9 @@ namespace Enxadrista
             VerificaTerminoProcura();
             if (EncerraProcura) return 0;
 
+            // Programação defensiva para evitar erros de índice fora da faixa da tabela.
+            if (nivel > Defs.NIVEL_MAXIMO - 1) return Avaliacao.ObtemPontuacao();
+
             // Chegamos a uma posição que é empate por causa das regras do xadrez. 
             if (nivel > 0 && Tabuleiro.EmpatePorRegra50()) return 0;
             if (nivel > 0 && Tabuleiro.EmpatePorRepeticao()) return 0;
@@ -166,8 +169,6 @@ namespace Enxadrista
             // Prepara lista the movimentos encontrados.
             if (nivel > 0) variacao_principal.Clear();
 
-            // Programação defensiva para evitar erros de índice fora da faixa da tabela.
-            if (nivel > Defs.NIVEL_MAXIMO - 1) return Avaliacao.ObtemPontuacao();
 
             // Accesso a informações da tabela de transposição (Transposition Table Probe).
             // Nota: alguns programas usam Hash Table ao inves the Transposition Table.
@@ -353,6 +354,27 @@ namespace Enxadrista
             return melhor_valor;
         }
 
+        /// <summary>
+        /// Pesquisa quiescente.
+        /// </summary>
+        /// <remarks>
+        /// Chegamos ao final da pesquisa determinado pela profundidade. Agora precisamos retornar o valor de avaliação 
+        /// da posição, mas temos que garantir que não somos afetados pelo efeito do horizonte.
+        /// Imagine que chegamos a uma posição se estamos na frente o valor de uma torre. Se retornarmos o valor da 
+        /// avaliação agora, estaremos à frente, mas no próximo movimento o oponente irá capturar nossa dama.
+        /// Esta é a razão pela qual temos pesquisa quiescente, continuaremos pesquisando os movimentos de captura, 
+        /// até alcançar uma posição calma e quiescente. Também podemos incluir os movimentos de promoção, porque
+        /// eles também alteram muito a pontuação.
+        /// Algumas técnicas que podem ser implementadas:
+        /// - poda delta, semelhante à poda de futilidade.
+        /// - tabela de transposição de uso, com alguma adaptação para pesquisa quiescente.
+        /// - SEE: avaliação da troca estática (static exchange evaluation).
+        /// </remarks>
+        /// <param name="alfa">Limite inferior da pesquisa.</param>
+        /// <param name="beta">Limite superior da pesquisa.</param>
+        /// <param name="nivel">Distância da posição inicial (conhecido como ply). Aumentada a cada chamada.</param>
+        /// <param name="variacao_principal">Lista dos melhores movimentos localizados durante a pesquisa.</param>
+        /// <returns>Melhor valor encontrado para a posição.</returns>
         public int Quiescente(int alfa, int beta, int nivel, List<Movimento> variacao_principal)
         {
             Debug.Assert(alfa >= Defs.VALOR_MINIMO);
@@ -361,34 +383,49 @@ namespace Enxadrista
             Debug.Assert(nivel >= 0 && nivel <= Defs.NIVEL_MAXIMO);
             Debug.Assert(variacao_principal != null);
 
+            // Final da pesquisa por causa do tempo ou profundidade ?
             VerificaTerminoProcura();
             if (EncerraProcura) return 0;
-            ContadorPosicoes++;
-            if (nivel > 0) variacao_principal.Clear();
 
+            // Programação defensiva para evitar erros de índice fora da faixa da tabela.
             if (nivel >= Defs.NIVEL_MAXIMO - 1) return Avaliacao.ObtemPontuacao();
 
+            // Contador de posição. Apenas para fins informativos, para que você veja o quão rápido é o seu motor. 
+            ContadorPosicoes++;
+
+            // Verifica se podemos retornar o valor agora, encerrando a pesquisa.
             int melhor_valor = Avaliacao.ObtemPontuacao();
             if (melhor_valor >= beta) return melhor_valor;
             if (melhor_valor > alfa) alfa = melhor_valor;
 
+            // Prepara a variação principal. 
+            if (nivel > 0) variacao_principal.Clear();
             var nova_variacao_principal = new List<Movimento>();
 
+            // Gera e ordena a lista de movimentos.
+            // A melhoria que pode ser feita ao gerador de movimentos é ter uma opção para gerar apenas
+            // capturas e promoções para pesquisa quiescente.
             var lista = Tabuleiro.GeraMovimentos();
             lista = Ordenacao.Orderna(Tabuleiro.CorJogar, lista, null);
 
+            // Loop dos movimentos.
             foreach (var movimento in lista) {
-                if (!movimento.Captura() && !movimento.Promocao()) continue;
+                // Descararta movimentos simples.
+                if (!movimento.Tatico()) continue;
 
                 Tabuleiro.FazMovimento(movimento);
                 if (!Tabuleiro.MovimentoFeitoLegal()) {
                     Tabuleiro.DesfazMovimento();
                     continue;
                 }
+
+                // Determina valor para este movimento.
                 int valor_procura = -Quiescente(-beta, -alfa, nivel + 1, nova_variacao_principal);
+
                 Tabuleiro.DesfazMovimento();
                 if (EncerraProcura) return 0;
 
+                // Verifica valor do movimento, similar a pesquisa alfa/beta.
                 if (valor_procura >= beta) return valor_procura;
 
                 if (valor_procura > melhor_valor) {
@@ -400,9 +437,13 @@ namespace Enxadrista
                 }
             }
 
+            // Retorna o valor diretamente, esta pesquisa não é muito precisa.
             return melhor_valor;
         }
 
+        /// <summary>
+        /// Verifica se podemos terminar a pesquisa.
+        /// </summary>
         private void VerificaTerminoProcura()
         {
             if (ContadorPosicoes % 2000 != 0) return;
@@ -410,6 +451,12 @@ namespace Enxadrista
             if (ProfundidadeAtual >= ProfundidadeLimite) EncerraProcura = true;
         }
 
+        /// <summary>
+        /// Atualiza variação principal. Copia uma lista de movimentos.
+        /// </summary>
+        /// <param name="destino">Lista de movimentos destino.</param>
+        /// <param name="origem">Lista de movimentos origem.</param>
+        /// <param name="movimento">Movimento a ser inserido na variação principal.</param>
         private void AtualizaVariacaoPrincipal(List<Movimento> destino, List<Movimento> origem, Movimento movimento)
         {
             Debug.Assert(destino != null);
@@ -421,6 +468,12 @@ namespace Enxadrista
             foreach (var novo_movimento in origem) destino.Add(novo_movimento);
         }
 
+        /// <summary>
+        /// Imprime a lista de movimentos durante a pesquisa.
+        /// </summary>
+        /// <param name="valor">Valor atual do movimento.</param>
+        /// <param name="profundidade">Produndidade em que o valor foi calculado.</param>
+        /// <param name="variacao_principal">Lista de movimentos.</param>
         private void ImprimeVariacaoPrincipal(int valor, int profundidade, List<Movimento> variacao_principal)
         {
             Debug.Assert(valor >= Defs.VALOR_MINIMO && valor <= Defs.VALOR_MAXIMO);
