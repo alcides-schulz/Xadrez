@@ -8,9 +8,34 @@ using System.Diagnostics;
 namespace Enxadrista
 {
     /// <summary>
-    ///             //Motor.Tabuleiro.NovaPartida("8/k/3p4/p2P1p2/P2P1P2/8/8/K7 w - - 0 1");
-    ///             //Motor.Tabuleiro.NovaPartida("2k5/8/1pP1K3/1P6/8/8/8/8 w - -");
+    /// Tabela de Transposição.
     /// </summary>
+    /// <remarks>
+    /// Esta tabela será usada para armazenar informações sobre as posições visitadas, e 
+    /// quando a mesma posição for visitada novamente, as informações armazenadas podem 
+    /// ser usadas para economizar tempo.
+    /// Normalmente, o usuário irá decidir o tamanho da tabela e pode ser muito grande, 
+    /// desde que tenha memória disponível. Este é um componente importante para programas 
+    /// competitivos.
+    /// Enxadrista usa uma tabela muito pequena, mas isso deve dar uma boa idéia de como 
+    /// funciona.
+    /// A tabela terá várias entradas dependendo da memória disponível. Normalmente, o 
+    /// número de entradas é definido quando o programa é iniciado com base no tamanho da tabela.
+    /// Cada entrada terá quatro registros, onde podemos armazenar informações sobre a posição.
+    /// Cada registro terá informações sobre uma posição diferente.
+    /// Esta estrutura pode variar de programa para programa.
+    /// A posição é identificada pela chave zobrist, você pode ver como ela é calculada na
+    /// classe zobrist.cs.
+    /// Vamos armazenar no registro, a profundidade, o valor da posição, o melhor movimento
+    /// e um valor para indicar qual o tipo de valor que temos. Veja a classe Registro para
+    /// mais detalhes sobre estes dados.
+    /// 
+    /// 
+    ///     ///             //Motor.Tabuleiro.NovaPartida("8/k/3p4/p2P1p2/P2P1P2/8/8/K7 w - - 0 1");
+    ///             //Motor.Tabuleiro.NovaPartida("2k5/8/1pP1K3/1P6/8/8/8/8 w - -");
+    /// </remarks>
+    /// <see cref="Transposicao.Registro"/>
+    /// <see cref="Zobrist"/>
     public class Transposicao
     {
         public class Registro
