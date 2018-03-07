@@ -30,8 +30,7 @@ namespace Enxadrista
     /// e um valor para indicar qual o tipo de valor que temos. Veja a classe Registro para
     /// mais detalhes sobre estes dados.
     /// 
-    ///     /// 
-    ///     ///             //Motor.Tabuleiro.NovaPartida("8/k/3p4/p2P1p2/P2P1P2/8/8/K7 w - - 0 1");
+    ///             //Motor.Tabuleiro.NovaPartida("8/k/3p4/p2P1p2/P2P1P2/8/8/K7 w - - 0 1");
     ///             //Motor.Tabuleiro.NovaPartida("2k5/8/1pP1K3/1P6/8/8/8/8 w - -");
     /// </remarks>
     /// <see cref="Transposicao.Registro"/>
