@@ -30,22 +30,64 @@ namespace Enxadrista
     /// e um valor para indicar qual o tipo de valor que temos. Veja a classe Registro para
     /// mais detalhes sobre estes dados.
     /// 
-    ///             //Motor.Tabuleiro.NovaPartida("8/k/3p4/p2P1p2/P2P1P2/8/8/K7 w - - 0 1");
-    ///             //Motor.Tabuleiro.NovaPartida("2k5/8/1pP1K3/1P6/8/8/8/8 w - -");
+    /// É pouco difícil implementar a tabela de transposição. Algo que pode ajudar são as 
+    /// seguintes posições, onde é muito difícil para o programa encontrar o melhor movimento 
+    /// sem a implementação correta. Então, use a posição e execute seu programa, 
+    /// se não encontrar a melhor jogada de forma consistente com algum tempo de procura,
+    /// você pode ter um problema com sua implementação. Eu sempre uso uns 20 segundos 
+    /// para a procura.
+    /// 
+    ///     Posição                                     Melhor movimento
+    ///     8/k/3p4/p2P1p2/P2P1P2/8/8/K7 w - - 0 1      a1b1
+    ///     2k5/8/1pP1K3/1P6/8/8/8/8 w - -              c6c7
+    /// 
     /// </remarks>
     /// <see cref="Transposicao.Registro"/>
     /// <see cref="Zobrist"/>
     public class Transposicao
     {
+        /// <summary>
+        /// Registro da Tabela de Transposição.
+        /// </summary>
+        /// <remarks>
+        /// Podemos ter até quatro registros em cada entrada.
+        /// Cada registro possui informações sobre uma posição.
+        /// </remarks>
         public class Registro
         {
+            /// <summary>
+            /// Chave Zobrist exclusiva para a posição.
+            /// </summary>
             public ulong Chave;
+
+            /// <summary>
+            /// Profundidade onde o valor da posição foi encontrado.
+            /// </summary>
             public int Profundidade;
+
+            /// <summary>
+            /// Valor da posição.
+            /// </summary>
             public int Valor;
+
+            /// <summary>
+            /// Melhor movimento para a posição.
+            /// </summary>
             public Movimento Movimento;
+
+            /// <summary>
+            /// Número que indica a idade do registro. Usado para substituir registros antigos.
+            /// </summary>
             public byte Geracao;
+
+            /// <summary>
+            /// Tipo do registro: superior, inferior ou exato.
+            /// </summary>
             public byte Tipo;
 
+            /// <summary>
+            /// Inicializa o registro.
+            /// </summary>
             public void Inicializa()
             {
                 Chave = 0;
@@ -56,6 +98,15 @@ namespace Enxadrista
                 Tipo = 0;
             }
 
+            /// <summary>
+            /// Indica se o valor no registro pode ser usado na pesquisa.
+            /// </summary>
+            /// <remarks>
+            /// 
+            /// </remarks>
+            /// <param name="alfa"></param>
+            /// <param name="beta"></param>
+            /// <returns></returns>
             public bool PodeUsarValor(int alfa, int beta)
             {
                 if (Tipo == Transposicao.REGISTRO_SUPERIOR && Valor <= alfa) return true;
@@ -66,23 +117,23 @@ namespace Enxadrista
             }
         }
 
-        public const int NUMERO_GRUPOS = 500000;
+        public const int NUMERO_ENTRADAS = 500000;
         public const int NUMERO_REGISTROS = 4;
 
         public const byte REGISTRO_SUPERIOR = 1;
         public const byte REGISTRO_INFERIOR = 2;
         public const byte REGISTRO_EXATO = 3;
 
-        public Registro[][] Tabela = new Registro[NUMERO_GRUPOS][];
+        public Registro[][] Tabela = new Registro[NUMERO_ENTRADAS][];
 
         private byte Geracao;
 
         public Transposicao()
         {
-            for (int indice_grupo = 0; indice_grupo < NUMERO_GRUPOS; indice_grupo++) {
-                Tabela[indice_grupo] = new Registro[NUMERO_REGISTROS];
+            for (int indice_entrada = 0; indice_entrada < NUMERO_ENTRADAS; indice_entrada++) {
+                Tabela[indice_entrada] = new Registro[NUMERO_REGISTROS];
                 for (int indice_registro = 0; indice_registro < NUMERO_REGISTROS; indice_registro++) {
-                    Tabela[indice_grupo][indice_registro] = new Registro();
+                    Tabela[indice_entrada][indice_registro] = new Registro();
                 }
             }
             Inicializa();
@@ -91,9 +142,9 @@ namespace Enxadrista
         public void Inicializa()
         {
             Geracao = 0;
-            for (int indice_grupo = 0; indice_grupo < NUMERO_GRUPOS; indice_grupo++) {
+            for (int indice_entrada = 0; indice_entrada < NUMERO_ENTRADAS; indice_entrada++) {
                 for (int indice_registro = 0; indice_registro < NUMERO_REGISTROS; indice_registro++) {
-                    Tabela[indice_grupo][indice_registro].Inicializa();
+                    Tabela[indice_entrada][indice_registro].Inicializa();
                 }
             }
         }
@@ -107,13 +158,13 @@ namespace Enxadrista
         {
             Debug.Assert(profundidade >= 0 && profundidade <= Defs.PROFUNDIDADE_MAXIMA);
 
-            int indice_grupo = (int)(chave % NUMERO_GRUPOS);
+            int indice_entrada = (int)(chave % NUMERO_ENTRADAS);
 
-            Debug.Assert(indice_grupo >= 0 && indice_grupo < Transposicao.NUMERO_GRUPOS);
+            Debug.Assert(indice_entrada >= 0 && indice_entrada < Transposicao.NUMERO_ENTRADAS);
 
-            var grupo = Tabela[indice_grupo];
+            var entrada = Tabela[indice_entrada];
 
-            var registro = grupo.Where(r => r.Chave == chave && r.Profundidade >= profundidade).FirstOrDefault();
+            var registro = entrada.Where(r => r.Chave == chave && r.Profundidade >= profundidade).FirstOrDefault();
             if (registro != null) registro.Geracao = Geracao;
             return registro;
         }
@@ -125,13 +176,13 @@ namespace Enxadrista
             Debug.Assert(nivel >= 0 && nivel < Defs.NIVEL_MAXIMO);
             Debug.Assert(tipo == REGISTRO_INFERIOR || tipo == REGISTRO_EXATO || tipo == REGISTRO_SUPERIOR);
 
-            int indice_grupo = (int)(chave % NUMERO_GRUPOS);
-            Debug.Assert(indice_grupo >= 0 && indice_grupo < Transposicao.NUMERO_GRUPOS);
+            int indice_entrada = (int)(chave % NUMERO_ENTRADAS);
+            Debug.Assert(indice_entrada >= 0 && indice_entrada < Transposicao.NUMERO_ENTRADAS);
 
-            var grupo = Tabela[indice_grupo];
+            var entrada = Tabela[indice_entrada];
 
-            var registro = grupo.FirstOrDefault(r => r.Chave == chave);
-            if (registro == null) registro = grupo.OrderBy(r => r.Geracao).ThenBy(r => r.Profundidade).First();
+            var registro = entrada.FirstOrDefault(r => r.Chave == chave);
+            if (registro == null) registro = entrada.OrderBy(r => r.Geracao).ThenBy(r => r.Profundidade).First();
 
             registro.Chave = chave;
             registro.Geracao = Geracao;
