@@ -7,32 +7,32 @@ using System.Threading.Tasks;
 namespace Enxadrista
 {
     /// <summary>
-    /// Avalia a posição atual no tabuleiro e dá-lhe um valor. 
+    /// Avalia a posição atual no tabuleiro e atribui um valor. 
     /// </summary>
     /// <remarks>
     /// Basicamente dá bônus e/ou penalidades para cada lado e calcula a diferença. Este valor indica quem está melhor.
     /// Esta avaliação será usada pela pesquisa para selecionar a melhor jogada. 
     /// 
     /// É melhor ter termos gerais que tenham a possibilidade de acontecer em muitas posições, do que um termo 
-    /// específico não acontecerá com freqüência e afetará o desempenho negativamente.
-    /// Normalmente, você vai ver os seguintes termos em uma avaliação:
+    /// específico que não acontecerá com muita freqüência e afetará o desempenho negativamente.
+    /// 
+    /// Normalmente, você vai ver alguns destes os seguintes termos em uma avaliação:
     /// - material - quantas peças cada lado tem.
     /// - segurança do rei - muito importante e também dificil para ajustar corretamente.
     /// - estrutura do peão - avalie para evitar peões isolados, peões duplicados, etc. E dê bônus para peões conectados, 
-    ///   passados, etc. Peão é muito importante e pode render uma boa força para o programa.
-    /// - mobilidade da peça - quanto mais movimentos disponíveis para peças, melhor.
+    ///   passados, etc. A estrutura dos peões é muito importante e pode render uma boa força para o programa.
+    /// - mobilidade da peça - quanto mais movimentos disponíveis para cada peça, melhor.
     /// 
     /// Há muitos termos, e você provavelmente pesquisará outros motores e tentará implementar no seu programa.
     /// Outro item importante, é automatizar o processo de afinação da sua avaliação. É difícil selecionar manualmente os 
     /// valores corretos para cada termo e já existem alguns processos de ajuste automático. O "Método de afinação Texel" ("Texel
-    /// tuning method" é popular.
+    /// tuning method" é bem popular. Eu usei este processo no programa Tucano e rendeu uma boa melhoria.
     /// 
     /// A avaliação do Enxadrista é muito simples e pode ser melhorada pela adição de:
-    /// - mobilidade das peças: para o cavalo, bispo, torre e dama, conte quantas casas eles podem alcançar. Você também pode 
-    ///   adicionar o número de peças próprias que defende ou o número de peças inimigas que ele ataca. Eu acredito que isso 
-    ///   pode influenciar o estilo de jogo, pode tentar atacar mais ou defender mais. Eu tenho que testar isso no meu 
-    ///   programa. Este termo pode afetar a performance do programa.
-    /// - Estrutura de peão: penalize peões isolados, peões duplos e dê bônus por peões passados. 
+    /// - mobilidade das peças: para o cavalo, bispo, torre e dama, conte quantas casas podem alcançar. Você também pode 
+    ///   adicionar o número de peças próprias que defende ou o número de peças inimigas que ataca. Eu acredito que isso 
+    ///   pode influenciar o estilo de jogo, pode tentar atacar mais ou defender mais. Isso é algo a ser testado.
+    /// - Estrutura de peão: penalize peões isolados, peões duplos e dê bônus para peões passados. 
     /// 
     ///  Se você tentar melhorar esta avaliação, faça apenas uma mudança a cada vez e avalie se a mudança teve um impacto positivo. 
     ///  Não insista demais, você pode gastar muito tempo em pequenas otimizações.

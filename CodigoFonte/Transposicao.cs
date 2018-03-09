@@ -102,6 +102,20 @@ namespace Enxadrista
             /// Indica se o valor no registro pode ser usado na pesquisa.
             /// </summary>
             /// <remarks>
+            /// Mesmo quando você encontra o registro na tabela de transposição, você ainda 
+            /// precisa verificar se você pode usar o valor da tabela.
+            /// 
+            /// Quando o valor é armazenado na tabela, também armazenamos o tipo do valor:
+            /// - Tipo Exato: Indica que o valor foi resultado de uma busca completa de 
+            ///   todos os movimentos na posição, ou seja, o valor estava entre alfa e beta 
+            ///   daquela pesquisa.
+            /// - Tipo Superior: indica que o valor é o valor máximo para a posição, e foi inferior 
+            ///   a Alfa no momento em que foi armazenado.
+            /// - Tipo Inferior: indica que o valor estava acima do beta, o que significa que talvez 
+            ///   não tenha pesquisado todos os movimentos, porque este valor causou o corte beta.
+            /// Olhe na Pesquisa, na função AlfaBeta para ver como os valores são armazenados.
+            /// 
+            /// 
             /// 
             /// </remarks>
             /// <param name="alfa"></param>
