@@ -223,7 +223,7 @@ namespace Enxadrista
                     if (EncerraProcura) return 0;
                     if (valor >= beta) {
                         if (valor > Defs.AVALIACAO_MAXIMA) valor = beta; // // Valor de mate, não muito confiável neste caso.
-                        Transposicao.Salva(Tabuleiro.Chave, profundidade, valor, nivel, Transposicao.REGISTRO_INFERIOR, null);
+                        Transposicao.Salva(Tabuleiro.Chave, profundidade, valor, nivel, Transposicao.Tipo.INFERIOR, null);
                         return valor;
                     }
                 }
@@ -315,7 +315,7 @@ namespace Enxadrista
                 // posição novamente, possivelmente também podemos ter outro corte beta.
                 if (valor_procura >= beta) {
                     Ordenacao.AtualizaHistoria(Tabuleiro.CorJogar, movimento, profundidade);
-                    Transposicao.Salva(Tabuleiro.Chave, profundidade, valor_procura, nivel, Transposicao.REGISTRO_INFERIOR, movimento);
+                    Transposicao.Salva(Tabuleiro.Chave, profundidade, valor_procura, nivel, Transposicao.Tipo.INFERIOR, movimento);
                     return valor_procura;
                 }
 
@@ -344,10 +344,10 @@ namespace Enxadrista
             // Podemos encontrar uma bom movimento, ou nenhum movimento foi capaz de melhorar alfa.
             if (melhor_movimento != null) {
                 Ordenacao.AtualizaHistoria(Tabuleiro.CorJogar, melhor_movimento, profundidade);
-                Transposicao.Salva(Tabuleiro.Chave, profundidade, melhor_valor, nivel, Transposicao.REGISTRO_EXATO, melhor_movimento);
+                Transposicao.Salva(Tabuleiro.Chave, profundidade, melhor_valor, nivel, Transposicao.Tipo.EXATO, melhor_movimento);
             }
             else {
-                Transposicao.Salva(Tabuleiro.Chave, profundidade, melhor_valor, nivel, Transposicao.REGISTRO_SUPERIOR, null);
+                Transposicao.Salva(Tabuleiro.Chave, profundidade, melhor_valor, nivel, Transposicao.Tipo.SUPERIOR, null);
             }
 
             // Retorna o valor da posição.
