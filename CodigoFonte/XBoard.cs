@@ -12,37 +12,38 @@ namespace Enxadrista
     /// </summary>
     /// <remarks>
     /// Este módulo é responsável pela comunicação do motor de xadrez com o mundo
-    /// exterior. O usuário pode enviar comandos para o motor e ler os resultados 
-    /// de volta.
+    /// exterior. 
     /// Normalmente, você vai usar um programa que gerenciará a interface do 
     /// usuário, e este programa enviará comandos para o motor.
     /// 
     /// Protocolo do motor de xadrez
     /// ----------------------------
     /// Existem dois tipos de protocolos que você pode implementar no seu motor: Xboard ou UCI.
-    /// Estamos usando o XBoard aqui porque este é o que eu sou mais familiar e também usei antes
+    /// Estamos usando o XBoard aqui porque é o que eu sou mais familiar e também usei antes
     /// no meu outro motor de xadrez (Tucano).
-    /// Muitos dos motores atuais está usando o UCI, mas o XBoard também é aceito.
+    /// Muitos dos motores atuais estão usando o UCI, mas o XBoard também é aceito.
     /// Dê uma olhada em ambos e veja qual deles você mais gosta, então faça sua decisão. Você
-    /// pode olhar para os motores de xadrez existentes para a implementação real e também ler a
-    /// documentação. Google "UCI chess engine protocol" ou "XBoard chess engine protocol".
+    /// pode olhar para os motores de xadrez existentes e também ler a documentação. 
+    /// Use google: "UCI chess engine protocol" ou "XBoard chess engine protocol".
+    /// O protocolo não tem influência na força do motor.
     /// 
-    /// Programa de Interface de xadrez
-    /// -------------------------------
+    /// Programa de Interface
+    /// ---------------------
     /// Para o programa de interface do usuário também há várias opções, e você pode examiná-las
     /// e escolher a que mais gosta. Exemplos: Arena, Winboard, ChessGUI, Cutechess. Esses são 
     /// gratuitos, mas também existem os programas comerciais.
     /// Com estes programas, você pode jogar contra o motor, ou fazê-los jogar uns com os outros, 
     /// fazer torneios, etc. 
     /// Existem muitos torneios de motores de xadrez, onde você pode ter o seu motor. 
-    /// Google "chess engine tournaments" ou "chess engines ratings".
+    /// Use google: "chess engine tournaments" ou "chess engines ratings".
     /// 
     /// Protocolo XBoard
     /// ----------------
     /// A implementação aqui é muito básica, e há muitos comandos que estão faltando. 
-    /// Se você executar o Enxadrista, ele permitirá que você digite comandos seguinte o 
-    /// formato Xboard. Quando começamos, vamos inicializar o tabuleiro de xadrez com um 
-    /// novo jogo, e se você simplesmente digitar "go", o motor buscará o melhor movimento 
+    /// Se você executar o Enxadrista, ele permitirá que você digite comandos segundo o 
+    /// formato Xboard. 
+    /// Quando começamos, vamos inicializar o tabuleiro de xadrez com um novo jogo, e 
+    /// se você simplesmente digitar "go", o motor buscará o melhor movimento 
     /// para a posição. Ele imprimirá a linha principal de pesquisa e, no final, imprimirá 
     /// o melhor movimento encontrado.
     /// Aqui está um exemplo da posição inicial:
@@ -148,7 +149,7 @@ namespace Enxadrista
         private sbyte CorComputador = Defs.COR_NENHUMA;
 
         /// <summary>
-        /// O tempo máximo da pesquisa em milissegundos.
+        /// Cria um novo protocolo XBoard e associa ao motor.
         /// </summary>
         /// <param name="motor">Motor a ser controlado pela interface XBoard.</param>
         public XBoard(Motor motor)
@@ -275,6 +276,7 @@ namespace Enxadrista
                 // Esta é uma estratégia de alocação de tempo bem simples. 
                 // Assume que temos 30 movimentos restantes.
                 // Você deve dedicar muito tempo, para construir sua estratégia de alocação de tempo :)
+                // O gerenciamento de tempo tem influência sobre a força do motor.
                 MilisegundosPorMovimento = tempo_total * 10 / 30;
             }
             catch (Exception e) {
