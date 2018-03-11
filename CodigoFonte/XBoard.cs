@@ -120,8 +120,8 @@ namespace Enxadrista
     ///     
     /// </code>
     /// 
-    /// Observe que tucano atinge a profundidade 20, e tem um formato melhor. Mas Tucano nem chega perto dos 
-    /// melhores motores. Talvez um dia possa ser, ou talvez o seu futuro motor possa ser :)
+    /// Observe que Tucano atinge a profundidade 20, e tem um formato melhor. Mas existem melhores motores! 
+    /// Talvez um dia, Tucano possa ser mais forte, ou talvez o seu futuro motor :)
     /// 
     /// </remarks>
     public class XBoard
