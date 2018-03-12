@@ -176,12 +176,12 @@ namespace Enxadrista
         /// Começo do programa.
         /// </summary>
         /// <remarks>
-        /// Inicialize os componentes do motor e inicie o loop principal da interface.
+        /// Inicializa os componentes do motor e inicia o loop principal da interface.
         /// </remarks>
         /// <param name="args">Nenhum parâmetro é usado neste momento.</param>
         public static void Main(string[] args)
         {
-            Console.WriteLine("Enxadrista 0.02 - Programa jogador de xadrez - Autor: Alcides Schulz");
+            Console.WriteLine("Enxadrista 1.0 - Programa jogador de xadrez - Autor: Alcides Schulz");
 
             var transposicao = new Transposicao();
             var motor = new Motor(transposicao);

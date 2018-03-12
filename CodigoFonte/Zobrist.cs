@@ -5,8 +5,47 @@ using System.Threading.Tasks;
 
 namespace Enxadrista
 {
+    /// <summary>
+    /// Gera chave zobrist para a posição.
+    /// </summary>
+    /// 
+    /// <remarks>
+    /// Método Zobrist
+    /// --------------
+    /// Este componente é responsável por gerar uma chave "única" para uma 
+    /// posição de xadrez. Essa chave é gerada usando o método Zobrist.
+    /// Na realidade, não podemos ter, de uma forma prática, uma chave única
+    /// para todas as posições de xadrez, mas esse método nos permite gerar 
+    /// uma chave que seja útil para um motor de xadrez.
+    /// É possível ter colisões de chave, mas esse risco é mínimo e aceitável 
+    /// para o motor de xadrez.
+    /// A chave da posição será usada para detectar a repetição da posição, 
+    /// como na regra de três repetições, mas mais importante para a tabela 
+    /// de transposição, que requer uma chave única para a posição.
+    /// 
+    /// Functionamento
+    /// --------------
+    /// Basicamente, temos um número aleatório para cada peça, em cada quadrado
+    /// para cada cor que são combinados usando o operador lógico XOR, chamado 
+    /// "ou exclusivo".
+    /// Também incluímos outras informações, como cor, estado roque, etc.
+    /// E teremos um número de 64 bits que é mais ou menos único para a posição.
+    /// Veja o método abaixo para mais detalhes.
+    /// 
+    /// Origem dos números aleatórios
+    /// -----------------------------
+    /// Os números aleatórios abaixo vêm do meu outro motor Tucano. Você pode gerar
+    /// esses números usando a função "random()". Mas se você tiver o conjunto 
+    /// completo pré-gerado, você sempre obtém os mesmos resultados toda vez que você
+    /// executa seu programa em computadores diferentes. Digamos que isso seja uma coisa
+    /// aleatória a menos no seu motor, que já é muito complexo.
+    /// 
+    /// </remarks>
     public class Zobrist
     {
+        /// <summary>
+        /// Contém todos os números aleatórios necessários para a geração de chaves.
+        /// </summary>
         public class Chave
         {
             public static readonly ulong COR = 0x6CA3EC67E69AA24C;
@@ -265,6 +304,17 @@ namespace Enxadrista
             }
         }
 
+        /// <summary>
+        /// Gera a chave para a posição atual do tabuleiro.
+        /// </summary>
+        /// <remarks>
+        /// Aqui estamos gerando a chave para a posição sempre que tivermos uma nova posição.
+        /// A maioria dos programas irá fazer isso de forma incremental, apenas atualizando 
+        /// os elementos que mudaram quando o movimento foi feito, exemplo a peça do movimento. 
+        /// Isso é possível por causa da forma como o "ou exclusivo" funciona.
+        /// </remarks>
+        /// <param name="tabuleiro">Tabuleiro.</param>
+        /// <returns>Chave da posição.</returns>
         public static ulong ObtemChave(Tabuleiro tabuleiro)
         {
             ulong chave = 0;
