@@ -22,7 +22,7 @@ fracos, mas pode ser um bom desafio para um jogador de xadrez amador.
 Eu pretendo melhorar isso no futuro.
 
 Enxadrista já foi testado e tem um elo estimado de 1250 em 18/03/2018. O que é baixo 
-para os programas de xadrez. Graças a Carlos Canavessi que testou contra outros motores. 
+para os programas de xadrez. Obrigado a Carlos Canavessi que testou contra outros motores. 
 Ele organiza torneios online que podem ser seguidos em http://twitch.tv/ccls.
 Veja os resultados dos primeiros testes:
 

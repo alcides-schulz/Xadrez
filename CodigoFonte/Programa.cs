@@ -20,7 +20,7 @@ namespace Enxadrista
     /// Você pode instalar o Enxadrista.exe como um novo "engine" em um desses programas gráficos.
     /// Em seguida, você joga contra a Enxadrista, ou pode fazê-lo jogar com outros programas já instalados.
     /// 
-    /// Se você executar o Enxadrista.exe, você pode dar comandos diretamente ao mecanismo. A sintaxe dos
+    /// Se você executar o Enxadrista.exe, você pode dar comandos diretamente ao motor. A sintaxe dos
     /// comandos dependerá do protocolo que você usa.
     /// Existem dois protocolos que podem ser usados: XBoard e UCI. Os programas gráficos geralmente 
     /// aceitam ambos os protocolos. 
@@ -52,7 +52,7 @@ namespace Enxadrista
     /// 
     /// Avaliacao - Evaluation - Avaliacao.cs
     /// -------------------------------------
-    /// Avalia e gera um valor para a posição no tabuleiro de xadrez. Esta função é usada pela procura.
+    /// Avalia e gera um valor para a posição no tabuleiro de xadrez. Esta função é usada pela pesquisa.
     /// Deve levar em consideração vários fatores para indicar qual lado tem uma vantagem. 
     /// Assim, juntamente com a procura, o motor determina o melhor. É um conceito importante, o motor 
     /// não está procurando o melhor movimento em si, mas está procurando o movimento que leva às 
@@ -68,8 +68,9 @@ namespace Enxadrista
     /// Como o motor joga xadrez
     /// ------------------------
     /// Basicamente, o programa deve ter o tabuleiro inicializado em uma determinada posição.
-    /// Ao receber o comando para procurar a melhor jogada, começará o processo de procura. 
-    /// A procura consiste em gerar todos movimentos para a posição e para cada movimento, gerar e 
+    /// Ao receber o comando para procurar a melhor jogada, começará o processo de procura pelo
+    /// melhor movimento, ou seja, pesquisa. 
+    /// A pesquisa consiste em gerar todos movimentos para a posição e para cada movimento, gerar e 
     /// executar cada resposta. Este processo é repetido recursivamente para cada movimento e é limitado 
     /// por tempo ou profundidade. 
     /// A profundidade é o número de movimentos que o programa poderá alcançar. Por exemplo a profundidade
@@ -77,7 +78,7 @@ namespace Enxadrista
     /// O programa irá então avaliar a posição para dar um valor e, em seguida, selecionar os movimentos 
     /// que levam a melhores posições.
     /// Um aspecto importante é que o programa de xadrez sempre considera a melhor resposta do adversário 
-    /// durante a procura.
+    /// durante a pesquisa.
     /// 
     /// Como escrever seu programa de xadrez
     /// ------------------------------------
@@ -89,7 +90,7 @@ namespace Enxadrista
     /// O primeiro passo seria escrever a representação do xadrez e o gerador de movimentos. Se você conhece as 
     /// regras do xadrez, você pode tentar escrever esse componente. Obter um gerador de movimentos livre de erros 
     /// já é um grande desafio.
-    /// Recomenda-se: faça uma mudança de cada vez, use "asserts" se a linguagem escolhida permitir, e não se 
+    /// Recomenda-se que se faça uma mudança de cada vez, use "asserts" se a linguagem escolhida permitir, e não se 
     /// apresse com as mudanças, o progresso pode ser lento.
     /// 
     /// O que faz um bom programa de xadrez
