@@ -17,16 +17,16 @@ namespace Enxadrista
     /// Normalmente, o usuário irá decidir o tamanho da tabela e pode ser muito grande, 
     /// desde que tenha memória disponível. Este é um componente importante para programas 
     /// competitivos.
-    /// Enxadrista usa uma tabela muito pequena, mas isso deve dar uma boa idéia de como 
+    /// Enxadrista usa uma tabela pequena, mas isso deve dar uma boa idéia de como 
     /// funciona. Um programa de xadrez vai usar pelo menos 64 MB. Tabelas com tamanho em 
     /// gigabytes é comum.
     /// 
     /// A tabela terá várias entradas dependendo da memória disponível. Normalmente, o 
-    /// número de entradas é definido quando o programa é iniciado com base no tamanho da tabela.
+    /// número de entradas é calculado quando o programa é iniciado com base no tamanho da tabela.
     /// Cada entrada terá quatro registros, onde podemos armazenar informações sobre a posição.
     /// Cada registro terá informações sobre uma posição diferente.
     /// Esta estrutura pode variar de programa para programa.
-    /// A posição é identificada pela chave zobrist, você pode ver como ela é calculada na
+    /// A posição é identificada pela chave "zobrist", você pode ver como é calculada na
     /// classe zobrist.cs.
     /// Vamos armazenar no registro, a profundidade, o valor da posição, o melhor movimento
     /// e um valor para indicar qual o tipo de valor que temos. Veja a classe Registro para
@@ -214,7 +214,7 @@ namespace Enxadrista
         public Registro Recupera(ulong chave, int profundidade)
         {
             Debug.Assert(profundidade >= 0 && profundidade <= Defs.PROFUNDIDADE_MAXIMA);
-            // Calculate indice da entrada da tabela usando a função de módulo.
+            // Calcula o indice da entrada da tabela usando a função de módulo.
             int indice_entrada = (int)(chave % NUMERO_ENTRADAS);
 
             Debug.Assert(indice_entrada >= 0 && indice_entrada < Transposicao.NUMERO_ENTRADAS);
