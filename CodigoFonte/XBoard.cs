@@ -178,7 +178,7 @@ namespace Enxadrista
                 if (linha == null) continue;
                 if (linha == "quit") break;
                 if (linha == "go") { CorComputador = Motor.Tabuleiro.CorJogar; continue; }
-                if (linha == "new") { Comando_new(); continue; }
+                if (linha == "new") { Comando_new(); CorComputador = Defs.COR_PRETA; continue; }
                 if (linha == "force") { CorComputador = Defs.COR_NENHUMA; continue; }
                 if (linha.StartsWith("st ")) { Comando_st(linha); continue; }
                 if (linha.StartsWith("sd ")) { Comando_sd(linha); continue; }
