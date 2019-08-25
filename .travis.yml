@@ -1,0 +1,7 @@
+language: csharp
+mono: none
+dotnet: 2.2.401
+solution: Enxadrista.sln
+script:
+  - dotnet restore
+  - dotnet test
