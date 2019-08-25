@@ -736,7 +736,7 @@ namespace Enxadrista
         /// <returns>Verdadeiro se alcançamos a regra do empate dos 50 movimentos.</returns>
         public bool EmpatePorRegra50()
         {
-            return ContadorRegra50 > 100 ? true : false;
+            return ContadorRegra50 >= 100 ? true : false;
         }
 
         /// <summary>

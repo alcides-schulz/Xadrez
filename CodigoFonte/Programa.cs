@@ -44,7 +44,7 @@ namespace Enxadrista
     /// Algumas técnicas utilizadas durante a pesquisa, que foram programadas neste programa, são:
     /// - pesquisa de janela zero - zero window search
     /// - movimento nulo - null move
-    /// - tabela de transposição - tranposition table
+    /// - tabela de transposição - transposition table
     /// - pesquisa quiescente - quiesce search
     /// - poda de futilidade - futility pruning
     /// - redução de movimento tardio - late move reduction
