@@ -1,9 +1,4 @@
-﻿using System;using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Enxadrista
+﻿namespace Enxadrista
 {
     /// <summary>
     /// Gera chave zobrist para a posição.
@@ -48,7 +43,7 @@ namespace Enxadrista
         /// </summary>
         public class Chave
         {
-            public static readonly ulong COR = 0x6CA3EC67E69AA24C;
+            public const ulong COR = 0x6CA3EC67E69AA24C;
 
             public static readonly ulong[] ENPASSANT = {
                 0xB366D1A55AC34195, 0x60D3FCFBCF572684, 0x672F9B58D7DFE3F8, 0xE09ACCE13480CBCE,

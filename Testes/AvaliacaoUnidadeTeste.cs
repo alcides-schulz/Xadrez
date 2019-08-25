@@ -1,14 +1,11 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Enxadrista;
+﻿using Enxadrista;
+using NUnit.Framework;
 
 namespace UnitTest
 {
-    [TestClass]
     public class AvaliacaoUnidadeTeste
     {
-        [TestMethod]
+        [Test]
         public void Avaliacao_Fase()
         {
             Tabuleiro t = new Tabuleiro();

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Enxadrista
+﻿namespace Enxadrista
 {
     /// <summary>
     /// Mantém as informações da história do tabuleiro depois que os movimentos são feitos.

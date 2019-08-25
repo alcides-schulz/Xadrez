@@ -1,21 +1,12 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Enxadrista;
+﻿using Enxadrista;
+using NUnit.Framework;
 
 namespace UnitTest
 {
-    [TestClass]
     public class TabuleiroUnidadeTeste
     {
 
-        [TestMethod]
-        public void Tabuleiro_Indice_64()
-        {
-            
-        }
-
-        [TestMethod]
+        [Test]
         public void Tabuleiro_FEN()
         {
             var t = new Tabuleiro();
@@ -39,7 +30,7 @@ namespace UnitTest
             TestFEN(t, "r3k1r1/8/8/8/8/8/8/R3K2R w KQq - 0 1");
         }
 
-        [TestMethod]
+        [Test]
         public void Tabuleiro_Movimentos()
         {
             var t = new Tabuleiro();
@@ -171,7 +162,7 @@ namespace UnitTest
             ContaMovimentos(t, "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 48);
         }
 
-        [TestMethod]
+        [Test]
         public void Tabuleiro_Perft()
         {
             Tabuleiro t = new Tabuleiro();
