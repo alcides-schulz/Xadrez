@@ -75,7 +75,7 @@ namespace Enxadrista
         /// <param name="cor">Cor do lado fazendo o movimento.</param>
         /// <param name="movimento">Movimento considerado bom.</param>
         /// <param name="profundidade">Profundidade que o movimento foi pesquisado.</param>
-        public void AtualizaHistoria(int cor, Movimento movimento, int profundidade)
+        public void AtualizaHistoria(Cor cor, Movimento movimento, int profundidade)
         {
             if (movimento.Tatico()) return;
 
@@ -111,7 +111,7 @@ namespace Enxadrista
         /// <param name="lista">List de movimentos.</param>
         /// <param name="melhor">Melhor movimento que será ordenado primeiro, normalmente da tabela de transposição</param>
         /// <returns>Lista ordenada de movimentos.</returns>
-        public List<Movimento> Orderna(int cor, List<Movimento> lista, Movimento melhor)
+        public List<Movimento> Orderna(Cor cor, List<Movimento> lista, Movimento melhor)
         {
             foreach (var movimento in lista) {
                 if (movimento.Equals(melhor)) {
@@ -161,10 +161,10 @@ namespace Enxadrista
         /// <param name="cor">Cor da peça.</param>
         /// <param name="peca">Tipo da peça.</param>
         /// <returns>Índice da peça.</returns>
-        private int IndicePeca(int cor, sbyte peca)
+        private int IndicePeca(Cor cor, sbyte peca)
         {
             int indice = Math.Abs(peca) - 1;
-            if (cor == Defs.COR_PRETA) indice += 6;
+            if (cor == Cor.Preta) indice += 6;
             Debug.Assert(indice >= 0 && indice < NUMERO_PECAS);
             return indice;
         }
