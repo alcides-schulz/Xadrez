@@ -142,7 +142,7 @@
             AvaliaTabuleiro();
             CalculaPontuacaoFinal();
 
-            return Tabuleiro.CorJogar == Cor.Branca ? PontuacaoFinal : -PontuacaoFinal;
+            return Tabuleiro.CorJogar.Multiplicador() * PontuacaoFinal;
         }
 
         /// <summary>

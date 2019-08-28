@@ -47,5 +47,15 @@ namespace Enxadrista
         {
             return cor == "w" ? Cor.Branca : Cor.Preta;
         }
+        
+        /// <summary>
+        /// Converte a cor para multiplicador de pontos.
+        /// "w" (white) -> 1
+        /// "b" (black) -> -1
+        /// </summary>
+        public static int Multiplicador(this Cor cor)
+        {
+            return (int)cor * -2 + 1;
+        }
     }
 }
