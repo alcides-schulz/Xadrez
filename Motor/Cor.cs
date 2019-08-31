@@ -45,7 +45,12 @@ namespace Enxadrista
         /// </summary>
         public static Cor ParaCor(this string cor)
         {
-            return cor == "w" ? Cor.Branca : Cor.Preta;
+            switch (cor)
+            {
+                case "w": return Cor.Branca;
+                case "b": return Cor.Preta;
+                default: return Cor.Nenhuma;
+            }
         }
         
         /// <summary>
