@@ -3,35 +3,46 @@
 namespace Enxadrista
 {
     /// <summary>
-    /// Avalia a posição atual no tabuleiro e atribui um valor. 
+    /// Avalia a posição atual do tabuleiro e atribui um valor. 
     /// </summary>
     /// <remarks>
-    /// Basicamente dá bônus e/ou penalidades para cada lado e calcula a diferença. Este valor indica quem está melhor.
-    /// Esta avaliação será usada pela pesquisa para selecionar a melhor jogada. 
+    /// Esta avaliação será usada pela pesquisa para selecionar a melhor jogada. O valor resultante de uma pesquisa é a
+    /// avaliação de uma posição folha na arvore, mas também podemos considerar a avaliação como um guia já que a busca
+    /// deve concentrar-se em tabuleiros com as melhores pontuações (para o lado que está jogando).  
+    ///  
+    /// Valores positivos são dados a termos que são considerados bônus e valores negativos penalidades. Já a
+    /// importância é definida pelo valor atribuído, quanto mais próximo a zero menor a importância do termo.
+    /// Com bônus e/ou penalidades para cada lado estima-se um valor resultante (que indica quem está melhor). 
     /// 
-    /// É melhor ter termos gerais que tenham a possibilidade de acontecer em muitas posições, do que um termo 
-    /// específico que não acontecerá com muita freqüência e afetará o desempenho negativamente.
+    /// Cada termo avaliado tem um custo computacional na identificação do comportamento no tabuleiro, por isso
+    /// é melhor usar termos que acontecem com mais frequência ou com bastante importância, já que usar um termo muito
+    /// específico e com pouca importância pode afetar negativamente o desempenho. 
     /// 
-    /// Normalmente, você vai ver alguns destes os seguintes termos em uma avaliação:
-    /// - material - quantas peças cada lado tem.
-    /// - segurança do rei - muito importante e também dificil para ajustar corretamente.
-    /// - estrutura do peão - avalie para evitar peões isolados, peões duplicados, etc. E dê bônus para peões conectados, 
-    ///   passados, etc. A estrutura dos peões é muito importante e pode render uma boa força para o programa.
-    /// - mobilidade da peça - quanto mais movimentos disponíveis para cada peça, melhor.
+    /// Os termos mais comuns em uma avaliação são:
+    /// - material - Cada peça tem seu valor, podemos definir que uma Rainha vale mais que um Cavalo.
+    /// - segurança do rei - Bonus para peças atacando casas próximas ao Rei, possíveis cheques, etc.
+    /// - estrutura do peão - Penalidades para peões isolados, peões duplicados, etc. Bônus para peões conectados, 
+    ///   passados, etc.
+    /// - mobilidade da peça - Quanto mais movimentos disponíveis para cada peça melhor.
     /// 
-    /// Há muitos termos, e você provavelmente pesquisará outros motores e tentará implementar no seu programa.
-    /// Outro item importante, é automatizar o processo de afinação da sua avaliação. É difícil selecionar manualmente os 
-    /// valores corretos para cada termo e já existem alguns processos de ajuste automático. O "Método de afinação Texel" ("Texel
-    /// tuning method" é bem popular. Eu usei este processo no programa Tucano e rendeu uma boa melhoria.
+    /// Há muitos outros termos, tente colocar no seu motor a maior quantidade de termos que melhoram sua performance.
+    /// É importante automatizar a atribuição de valores dos termos. É muito difícil selecionar manualmente valores
+    /// corretos para cada termo e já existem alguns processos de ajuste automático. O "Método de afinação Texel"
+    /// ("Texel tuning method") é bem simples e popular. Vários motores já utilizaram este método com sucesso, como
+    /// por exemplo, o Tucano e o Pirarucu.
     /// 
-    /// A avaliação do Enxadrista é muito simples e pode ser melhorada pela adição de:
+    /// A avaliação que vamos mostrar é muito simples e pode ser melhorada pela adição de:
     /// - mobilidade das peças: para o cavalo, bispo, torre e dama, conte quantas casas podem alcançar. Você também pode 
-    ///   adicionar o número de peças próprias que defende ou o número de peças inimigas que ataca. Eu acredito que isso 
-    ///   pode influenciar o estilo de jogo, pode tentar atacar mais ou defender mais. Isso é algo a ser testado.
+    ///   adicionar o número de peças próprias que defende ou o número de peças inimigas que ataca. Isso influencia o
+    ///   estilo de jogo, pode tentar atacar mais ou defender mais. Isso é algo a ser testado.
     /// - Estrutura de peão: penalize peões isolados, peões duplos e dê bônus para peões passados. 
     /// 
-    ///  Se você tentar melhorar esta avaliação, faça apenas uma mudança a cada vez e avalie se a mudança teve um impacto positivo. 
-    ///  Não insista demais, você pode gastar muito tempo em pequenas otimizações.
+    /// Para cada mudança feita na avaliação é necessário testar se teve um impacto positivo, afinal só queremos usar
+    /// termos que dão uma melhoria na performance. Não gaste muito tempo procurando valores perfeitos para cada termo,
+    /// use valores que melhoram a performance. É preferível testar várias modificações diferentes do que ficar
+    /// muito tempo testando pequenas otimizações, já que os valores ideais são específicos para cada conjunto de
+    /// termos.
+    ///  
     /// </remarks>
     public class Avaliacao
     {
