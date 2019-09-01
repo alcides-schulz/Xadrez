@@ -69,7 +69,7 @@ namespace Enxadrista
         /// <summary>
         /// Cor na vez de jogar: branco ou preto.
         /// </summary>
-        public sbyte CorJogar;
+        public Cor CorJogar;
 
         /// <summary>
         /// Indica se o roque E1G1 pode ser feito.
@@ -168,7 +168,7 @@ namespace Enxadrista
                 for (int coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++)
                     Quadrados[fileira * Defs.NUMERO_COLUNAS + coluna] = Defs.CASA_VAZIA;
 
-            CorJogar = Defs.COR_NENHUMA;
+            CorJogar = Cor.Nenhuma;
             RoqueE1G1 = false;
             RoqueE1C1 = false;
             RoqueE8G8 = false;
@@ -229,7 +229,7 @@ namespace Enxadrista
                     int indice = fileira * Defs.NUMERO_COLUNAS + coluna;
                     int item = Quadrados[indice];
                     if (item == Defs.CASA_VAZIA) continue;
-                    if (CorJogar == Defs.COR_BRANCA) {
+                    if (CorJogar == Cor.Branca) {
                         if (item == Defs.PEAO_BRANCO) GeraMovimentosPeaoBranco(lista, indice);
                         if (item == Defs.CAVALO_BRANCO) GeraMovimentosCavalo(lista, indice);
                         if (item == Defs.BISPO_BRANCO || item == Defs.DAMA_BRANCA) GeraMovimentosBispo(lista, indice);
@@ -422,7 +422,7 @@ namespace Enxadrista
         {
             foreach (int movimento in Defs.Movimentos.REI) GeraMovimento(lista, indice_origem, indice_origem + movimento);
 
-            if (CorJogar == Defs.COR_BRANCA) {
+            if (CorJogar == Cor.Branca) {
                 if (RoqueE1G1 && PodeGerarRoque((int)Defs.INDICE.F1, (int)Defs.INDICE.G1, (int)Defs.INDICE.H1, Defs.TORRE_BRANCA)) {
                     lista.Add(new Movimento(Defs.REI_BRANCO, indice_origem, (int)Defs.INDICE.G1));
                 }
@@ -463,10 +463,10 @@ namespace Enxadrista
                     lista.Add(new Movimento(Quadrados[indice_origem], indice_origem, indice_destino));
                     continue;
                 }
-                if (CorJogar == Defs.COR_BRANCA && CasaComPecaPreta(indice_destino)) {
+                if (CorJogar == Cor.Branca && CasaComPecaPreta(indice_destino)) {
                     lista.Add(new Movimento(Quadrados[indice_origem], indice_origem, indice_destino, Quadrados[indice_destino]));
                 }
-                if (CorJogar == Defs.COR_PRETA && CasaComPecaBranca(indice_destino)) {
+                if (CorJogar == Cor.Preta && CasaComPecaBranca(indice_destino)) {
                     lista.Add(new Movimento(Quadrados[indice_origem], indice_origem, indice_destino, Quadrados[indice_destino]));
                 }
                 break;
@@ -483,11 +483,11 @@ namespace Enxadrista
         {
             Debug.Assert(indice_origem >= 0 && indice_origem < Defs.INDICE_MAXIMO);
             Debug.Assert(indice_destino >= 0 && indice_destino < Defs.INDICE_MAXIMO);
-            if (CorJogar == Defs.COR_BRANCA && CasaComPecaPreta(indice_destino)) {
+            if (CorJogar == Cor.Branca && CasaComPecaPreta(indice_destino)) {
                 lista.Add(new Movimento(ObtemPeca(indice_origem), indice_origem, indice_destino, ObtemPeca(indice_destino)));
                 return;
             }
-            if (CorJogar == Defs.COR_PRETA && CasaComPecaBranca(indice_destino)) {
+            if (CorJogar == Cor.Preta && CasaComPecaBranca(indice_destino)) {
                 lista.Add(new Movimento(ObtemPeca(indice_origem), indice_origem, indice_destino, ObtemPeca(indice_destino)));
                 return;
             }
@@ -541,14 +541,14 @@ namespace Enxadrista
                 if (movimento.IndiceOrigem == (int)Defs.INDICE.H8) RoqueE8G8 = false;
                 if (movimento.IndiceOrigem == (int)Defs.INDICE.A8) RoqueE8C8 = false;
             }
-            if (CorJogar == Defs.COR_PRETA) ContadorMovimentos++;
+            if (CorJogar == Cor.Preta) ContadorMovimentos++;
 
             if (movimento.Peca == Defs.PEAO_BRANCO || movimento.Peca == Defs.PEAO_PRETO || movimento.Captura())
                 ContadorRegra50 = 0;
             else
                 ContadorRegra50++;
 
-            CorJogar = (CorJogar == Defs.COR_BRANCA ? Defs.COR_PRETA : Defs.COR_BRANCA);
+            CorJogar = CorJogar.Invertida();
 
             Chave = Zobrist.ObtemChave(this);
 
@@ -583,9 +583,9 @@ namespace Enxadrista
             if (movimento.RoqueE8G8()) MovePeca((int)Defs.INDICE.F8, (int)Defs.INDICE.H8);
             if (movimento.RoqueE8C8()) MovePeca((int)Defs.INDICE.D8, (int)Defs.INDICE.A8);
 
-            if (CorJogar == Defs.COR_BRANCA) ContadorMovimentos--;
+            if (CorJogar == Cor.Branca) ContadorMovimentos--;
 
-            CorJogar = (CorJogar == Defs.COR_BRANCA ? Defs.COR_PRETA : Defs.COR_BRANCA);
+            CorJogar = CorJogar.Invertida();
         }
 
         /// <summary>
@@ -601,9 +601,9 @@ namespace Enxadrista
         {
             Historia[IndiceHistoria].Salva(this, null);
             IndiceEnPassant = 0;
-            if (CorJogar == Defs.COR_PRETA) ContadorMovimentos++;
+            if (CorJogar == Cor.Preta) ContadorMovimentos++;
             ContadorRegra50++;
-            CorJogar = (CorJogar == Defs.COR_BRANCA ? Defs.COR_PRETA : Defs.COR_BRANCA);
+            CorJogar = CorJogar.Invertida();
             Chave = Zobrist.ObtemChave(this);
             IndiceHistoria++;
         }
@@ -618,8 +618,8 @@ namespace Enxadrista
             if (IndiceHistoria == 0) return;
             IndiceHistoria--;
             Historia[IndiceHistoria].Restaura(this);
-            if (CorJogar == Defs.COR_BRANCA) ContadorMovimentos--;
-            CorJogar = (CorJogar == Defs.COR_BRANCA ? Defs.COR_PRETA : Defs.COR_BRANCA);
+            if (CorJogar == Cor.Branca) ContadorMovimentos--;
+            CorJogar = CorJogar.Invertida();
         }
 
         /// <summary>
@@ -643,24 +643,22 @@ namespace Enxadrista
         /// </remarks>
         /// <param name="cor">Cor a ser verificada</param>
         /// <returns>Verdadeito se cor possui pelo menos uma das peças: dama, torre, bispo ou cavalo.</returns>
-        public bool TemPecas(int cor)
+        public bool TemPecas(Cor cor)
         {
             for (int fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++) {
                 for (int coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++) {
                     int indice = fileira * Defs.NUMERO_COLUNAS + coluna;
                     int item = Quadrados[indice];
                     if (item == Defs.CASA_VAZIA) continue;
-                    if (cor == Defs.COR_BRANCA) {
-                        if (item == Defs.CAVALO_BRANCO) return true;
-                        if (item == Defs.BISPO_BRANCO) return true;
-                        if (item == Defs.TORRE_BRANCA) return true;
-                        if (item == Defs.DAMA_BRANCA) return true;
-                    }
-                    else {
-                        if (item == Defs.CAVALO_PRETO) return true;
-                        if (item == Defs.BISPO_PRETO) return true;
-                        if (item == Defs.TORRE_PRETA) return true;
-                        if (item == Defs.DAMA_PRETA) return true;
+                    if (cor == Cor.Branca)
+                    {
+                        return item == Defs.CAVALO_BRANCO || item == Defs.BISPO_BRANCO || item == Defs.TORRE_BRANCA ||
+                               item == Defs.DAMA_BRANCA;
+                    } 
+                    else
+                    {
+                        return item == Defs.CAVALO_PRETO || item == Defs.BISPO_PRETO || item == Defs.TORRE_PRETA ||
+                               item == Defs.DAMA_PRETA;
                     }
                 }
             }
@@ -683,30 +681,30 @@ namespace Enxadrista
             if (IndiceHistoria == 0) return false;
             Movimento movimento = Historia[IndiceHistoria - 1].Movimento;
 
-            if (CorJogar == Defs.COR_BRANCA) {
+            if (CorJogar == Cor.Branca) {
                 Debug.Assert(ObtemPeca(IndiceReiPreto) == Defs.REI_PRETO);
-                if (CasaAtacada(IndiceReiPreto, Defs.COR_BRANCA)) return false;
+                if (CasaAtacada(IndiceReiPreto, Cor.Branca)) return false;
                 if (movimento.RoqueE8G8()) {
-                    if (CasaAtacada((int)Defs.INDICE.E8, Defs.COR_BRANCA)) return false;
-                    if (CasaAtacada((int)Defs.INDICE.F8, Defs.COR_BRANCA)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.E8, Cor.Branca)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.F8, Cor.Branca)) return false;
                 }
                 if (movimento.RoqueE8C8()) {
-                    if (CasaAtacada((int)Defs.INDICE.E8, Defs.COR_BRANCA)) return false;
-                    if (CasaAtacada((int)Defs.INDICE.D8, Defs.COR_BRANCA)) return false;
-                    if (CasaAtacada((int)Defs.INDICE.C8, Defs.COR_BRANCA)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.E8, Cor.Branca)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.D8, Cor.Branca)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.C8, Cor.Branca)) return false;
                 }
             }
             else {
                 Debug.Assert(ObtemPeca(IndiceReiBranco) == Defs.REI_BRANCO);
-                if (CasaAtacada(IndiceReiBranco, Defs.COR_PRETA)) return false;
+                if (CasaAtacada(IndiceReiBranco, Cor.Preta)) return false;
                 if (movimento.RoqueE1G1()) {
-                    if (CasaAtacada((int)Defs.INDICE.E1, Defs.COR_PRETA)) return false;
-                    if (CasaAtacada((int)Defs.INDICE.F1, Defs.COR_PRETA)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.E1, Cor.Preta)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.F1, Cor.Preta)) return false;
                 }
                 if (movimento.RoqueE1C1()) {
-                    if (CasaAtacada((int)Defs.INDICE.E1, Defs.COR_PRETA)) return false;
-                    if (CasaAtacada((int)Defs.INDICE.D1, Defs.COR_PRETA)) return false;
-                    if (CasaAtacada((int)Defs.INDICE.C1, Defs.COR_PRETA)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.E1, Cor.Preta)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.D1, Cor.Preta)) return false;
+                    if (CasaAtacada((int)Defs.INDICE.C1, Cor.Preta)) return false;
                 }
             }
 
@@ -742,10 +740,10 @@ namespace Enxadrista
         /// <returns>Verdadeiro se o rei está em xeque</returns>
         public bool CorJogarEstaEmCheque()
         {
-            if (CorJogar == Defs.COR_BRANCA)
-                return CasaAtacada(IndiceReiBranco, Defs.COR_PRETA);
+            if (CorJogar == Cor.Branca)
+                return CasaAtacada(IndiceReiBranco, Cor.Preta);
             else
-                return CasaAtacada(IndiceReiPreto, Defs.COR_BRANCA);
+                return CasaAtacada(IndiceReiPreto, Cor.Branca);
         }
 
         /// <summary>
@@ -754,10 +752,10 @@ namespace Enxadrista
         /// <param name="indice">Índice da casa a ser verificada</param>
         /// <param name="cor_atacante">Cor do lado atacante.</param>
         /// <returns>Verdadeiro se a casa está sob ataque pela cor atacante</returns>
-        private bool CasaAtacada(int indice, int cor_atacante)
+        private bool CasaAtacada(int indice, Cor cor_atacante)
         {
             Debug.Assert(Quadrados[indice] != Defs.BORDA);
-            Debug.Assert(cor_atacante == Defs.COR_BRANCA || cor_atacante == Defs.COR_PRETA);
+            Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
             if (CasaAtacadaPorPeao(indice, cor_atacante)) return true;
             if (CasaAtacadaPorCavalo(indice, cor_atacante)) return true;
@@ -773,12 +771,12 @@ namespace Enxadrista
         /// <param name="indice">Índice da casa a ser verificada</param>
         /// <param name="cor_atacante">Cor do lado atacante.</param>
         /// <returns>Verdadeiro se a casa está sob ataque</returns>
-        private bool CasaAtacadaPorPeao(int indice, int cor_atacante)
+        private bool CasaAtacadaPorPeao(int indice, Cor cor_atacante)
         {
             Debug.Assert(Quadrados[indice] != Defs.BORDA);
-            Debug.Assert(cor_atacante == Defs.COR_BRANCA || cor_atacante == Defs.COR_PRETA);
+            Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
-            if (cor_atacante == Defs.COR_BRANCA) {
+            if (cor_atacante == Cor.Branca) {
                 if (ObtemPeca(indice + Defs.POSICAO_SUDESTE) == Defs.PEAO_BRANCO) return true;
                 if (ObtemPeca(indice + Defs.POSICAO_SUDOESTE) == Defs.PEAO_BRANCO) return true;
             }
@@ -795,12 +793,12 @@ namespace Enxadrista
         /// <param name="indice">Índice da casa a ser verificada</param>
         /// <param name="cor_atacante">Cor do lado atacante.</param>
         /// <returns>Verdadeiro se a casa está sob ataque</returns>
-        private bool CasaAtacadaPorCavalo(int indice, int cor_atacante)
+        private bool CasaAtacadaPorCavalo(int indice, Cor cor_atacante)
         {
             Debug.Assert(Quadrados[indice] != Defs.BORDA);
-            Debug.Assert(cor_atacante == Defs.COR_BRANCA || cor_atacante == Defs.COR_PRETA);
+            Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
-            sbyte cavalo = cor_atacante == Defs.COR_BRANCA ? Defs.CAVALO_BRANCO : Defs.CAVALO_PRETO;
+            sbyte cavalo = cor_atacante == Cor.Branca ? Defs.CAVALO_BRANCO : Defs.CAVALO_PRETO;
 
             foreach (int movimento in Defs.Movimentos.CAVALO) if (ObtemPeca(indice + movimento) == cavalo) return true;
 
@@ -813,13 +811,13 @@ namespace Enxadrista
         /// <param name="indice">Índice da casa a ser verificada</param>
         /// <param name="cor_atacante">Cor do lado atacante.</param>
         /// <returns>Verdadeiro se a casa está sob ataque pela torre ou dama</returns>
-        private bool CasaAtacadaPorTorreDama(int indice, int cor_atacante)
+        private bool CasaAtacadaPorTorreDama(int indice, Cor cor_atacante)
         {
             Debug.Assert(Quadrados[indice] != Defs.BORDA);
-            Debug.Assert(cor_atacante == Defs.COR_BRANCA || cor_atacante == Defs.COR_PRETA);
+            Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
-            sbyte torre = cor_atacante == Defs.COR_BRANCA ? Defs.TORRE_BRANCA : Defs.TORRE_PRETA;
-            sbyte dama = cor_atacante == Defs.COR_BRANCA ? Defs.DAMA_BRANCA : Defs.DAMA_PRETA;
+            sbyte torre = cor_atacante == Cor.Branca ? Defs.TORRE_BRANCA : Defs.TORRE_PRETA;
+            sbyte dama = cor_atacante == Cor.Branca ? Defs.DAMA_BRANCA : Defs.DAMA_PRETA;
 
             foreach (int movimento in Defs.Movimentos.TORRE) {
                 int indice_destino = indice + movimento;
@@ -840,13 +838,13 @@ namespace Enxadrista
         /// <param name="indice">Índice da casa a ser verificada</param>
         /// <param name="cor_atacante">Cor do lado atacante.</param>
         /// <returns>Verdadeiro se a casa está sob ataque plo bispo ou dama</returns>
-        private bool CasaAtacadaPorBispoDama(int indice, int cor_atacante)
+        private bool CasaAtacadaPorBispoDama(int indice, Cor cor_atacante)
         {
             Debug.Assert(Quadrados[indice] != Defs.BORDA);
-            Debug.Assert(cor_atacante == Defs.COR_BRANCA || cor_atacante == Defs.COR_PRETA);
+            Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
-            sbyte bispo = cor_atacante == Defs.COR_BRANCA ? Defs.BISPO_BRANCO : Defs.BISPO_PRETO;
-            sbyte dama = cor_atacante == Defs.COR_BRANCA ? Defs.DAMA_BRANCA : Defs.DAMA_PRETA;
+            sbyte bispo = cor_atacante == Cor.Branca ? Defs.BISPO_BRANCO : Defs.BISPO_PRETO;
+            sbyte dama = cor_atacante == Cor.Branca ? Defs.DAMA_BRANCA : Defs.DAMA_PRETA;
 
             foreach (int movimento in Defs.Movimentos.BISPO) {
                 int indice_destino = indice + movimento;
@@ -867,12 +865,12 @@ namespace Enxadrista
         /// <param name="indice">Índice da casa a ser verificada</param>
         /// <param name="cor_atacante">Cor do lado atacante.</param>
         /// <returns>Verdadeiro se a casa está sob ataque</returns>
-        private bool CasaAtacadaPorRei(int indice, int cor_atacante)
+        private bool CasaAtacadaPorRei(int indice, Cor cor_atacante)
         {
             Debug.Assert(Quadrados[indice] != Defs.BORDA);
-            Debug.Assert(cor_atacante == Defs.COR_BRANCA || cor_atacante == Defs.COR_PRETA);
+            Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
-            sbyte rei = cor_atacante == Defs.COR_BRANCA ? Defs.REI_BRANCO : Defs.REI_PRETO;
+            sbyte rei = cor_atacante == Cor.Branca ? Defs.REI_BRANCO : Defs.REI_PRETO;
 
             foreach (int movimento in Defs.Movimentos.REI) if (ObtemPeca(indice + movimento) == rei) return true;
 

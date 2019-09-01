@@ -64,8 +64,7 @@ namespace Enxadrista
                 }
             }
 
-            if (cor_jogar == "w") tabuleiro.CorJogar = Defs.COR_BRANCA; // white/branca
-            if (cor_jogar == "b") tabuleiro.CorJogar = Defs.COR_PRETA;  // black/preta
+            tabuleiro.CorJogar = cor_jogar.ParaCor();
 
             if (estado_roque.Contains('K')) tabuleiro.RoqueE1G1 = true;
             if (estado_roque.Contains('Q')) tabuleiro.RoqueE1C1 = true;
@@ -90,7 +89,7 @@ namespace Enxadrista
             string fen = "";
 
             fen += FEN.ObtemDescPosicao(tabuleiro);
-            fen += " " + (tabuleiro.CorJogar == Defs.COR_BRANCA ? "w" : "b");
+            fen += " " + tabuleiro.CorJogar.ParaTexto();
             fen += " " + FEN.ObtemDescRoque(tabuleiro);
             fen += " " + Defs.ObtemDescCasa(tabuleiro.IndiceEnPassant);
             fen += " " + tabuleiro.ContadorRegra50.ToString();
