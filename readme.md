@@ -50,7 +50,8 @@ Vou responder o melhor que puder.
 Um abraço.
 
 Alcides Schulz - autor do programa Tucano.
-
 email: alcides_schulz@hotmail.com
-
 site: https://sites.google.com/site/tucanochess/
+
+Raoni Campos - Autor do programa Pirarucu.
+site: https://www.github.com/ratosh/
