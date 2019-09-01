@@ -186,7 +186,7 @@ namespace Enxadrista
         /// <param name="args">Nenhum parâmetro é usado neste momento.</param>
         public static void Main(string[] args)
         {
-            Console.WriteLine("Enxadrista 1.0 - Programa jogador de xadrez - Autor: Alcides Schulz");
+            Console.WriteLine("Enxadrista 1.0.1 - Programa jogador de xadrez - Autores: Alcides Schulz e Raoni Campos");
 
             var transposicao = new Transposicao();
             var motor = new Motor(transposicao);
