@@ -107,11 +107,6 @@ namespace Enxadrista
 
         public const sbyte PECA_NENHUMA = 0;
 
-        // Definições para cores.
-        public const sbyte COR_BRANCA = 1;
-        public const sbyte COR_PRETA = -1;
-        public const sbyte COR_NENHUMA = 0;
-
         /// <summary>
         /// Coordenadas das posições do tabuleiro para imprimir.
         /// </summary>

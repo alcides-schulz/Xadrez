@@ -142,7 +142,7 @@ namespace Enxadrista
         /// <summary>
         /// Cor do jogador associado ao computador.
         /// </summary>
-        private sbyte CorComputador = Defs.COR_NENHUMA;
+        private Cor CorComputador = Cor.Nenhuma;
 
         /// <summary>
         /// Cria um novo protocolo XBoard e associa ao motor.
@@ -174,8 +174,8 @@ namespace Enxadrista
                 if (linha == null) continue;
                 if (linha == "quit") break;
                 if (linha == "go") { CorComputador = Motor.Tabuleiro.CorJogar; continue; }
-                if (linha == "new") { Comando_new(); CorComputador = Defs.COR_PRETA; continue; }
-                if (linha == "force") { CorComputador = Defs.COR_NENHUMA; continue; }
+                if (linha == "new") { Comando_new(); CorComputador = Cor.Preta; continue; }
+                if (linha == "force") { CorComputador = Cor.Nenhuma; continue; }
                 if (linha.StartsWith("st ")) { Comando_st(linha); continue; }
                 if (linha.StartsWith("sd ")) { Comando_sd(linha); continue; }
                 if (linha.StartsWith("time ")) { Comando_time(linha); continue; }
@@ -199,9 +199,8 @@ namespace Enxadrista
                 Motor.Tabuleiro.FazMovimento(Motor.Pesquisa.MelhorMovimento);
                 Console.WriteLine("move " + Motor.Pesquisa.MelhorMovimento.Notacao());
                 Console.Out.Flush();
-            }
-            else {
-                CorComputador = Defs.COR_NENHUMA;
+            } else {
+                CorComputador = Cor.Nenhuma;
             }
         }
 
@@ -227,7 +226,7 @@ namespace Enxadrista
         private void Comando_new()
         {
             Motor.Tabuleiro.NovaPartida(Defs.FEN_POSICAO_INICIAL);
-            CorComputador = Defs.COR_NENHUMA;
+            CorComputador = Cor.Nenhuma;
         }
 
         /// <summary>

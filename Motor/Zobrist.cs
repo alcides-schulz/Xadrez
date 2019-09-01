@@ -322,30 +322,30 @@
                     if (peca == Defs.CASA_VAZIA) continue;
                     int indice8x8 = Defs.Converte12x12Para8x8(indice12x12);
 
-                    if (peca == Defs.PEAO_BRANCO) { chave ^= Zobrist.Chave.Branco.PEAO[indice8x8]; continue; }
-                    if (peca == Defs.CAVALO_BRANCO) { chave ^= Zobrist.Chave.Branco.CAVALO[indice8x8]; continue; }
-                    if (peca == Defs.BISPO_BRANCO) { chave ^= Zobrist.Chave.Branco.BISPO[indice8x8]; continue; }
-                    if (peca == Defs.TORRE_BRANCA) { chave ^= Zobrist.Chave.Branco.TORRE[indice8x8]; continue; }
-                    if (peca == Defs.DAMA_BRANCA) { chave ^= Zobrist.Chave.Branco.DAMA[indice8x8]; continue; }
-                    if (peca == Defs.REI_BRANCO) { chave ^= Zobrist.Chave.Branco.REI[indice8x8]; continue; }
+                    if (peca == Defs.PEAO_BRANCO) { chave ^= Chave.Branco.PEAO[indice8x8]; continue; }
+                    if (peca == Defs.CAVALO_BRANCO) { chave ^= Chave.Branco.CAVALO[indice8x8]; continue; }
+                    if (peca == Defs.BISPO_BRANCO) { chave ^= Chave.Branco.BISPO[indice8x8]; continue; }
+                    if (peca == Defs.TORRE_BRANCA) { chave ^= Chave.Branco.TORRE[indice8x8]; continue; }
+                    if (peca == Defs.DAMA_BRANCA) { chave ^= Chave.Branco.DAMA[indice8x8]; continue; }
+                    if (peca == Defs.REI_BRANCO) { chave ^= Chave.Branco.REI[indice8x8]; continue; }
 
-                    if (peca == Defs.PEAO_PRETO) { chave ^= Zobrist.Chave.Preto.PEAO[indice8x8]; continue; }
-                    if (peca == Defs.CAVALO_PRETO) { chave ^= Zobrist.Chave.Preto.CAVALO[indice8x8]; continue; }
-                    if (peca == Defs.BISPO_PRETO) { chave ^= Zobrist.Chave.Preto.BISPO[indice8x8]; continue; }
-                    if (peca == Defs.TORRE_PRETA) { chave ^= Zobrist.Chave.Preto.TORRE[indice8x8]; continue; }
-                    if (peca == Defs.DAMA_PRETA) { chave ^= Zobrist.Chave.Preto.DAMA[indice8x8]; continue; }
-                    if (peca == Defs.REI_PRETO) { chave ^= Zobrist.Chave.Preto.REI[indice8x8]; continue; }
+                    if (peca == Defs.PEAO_PRETO) { chave ^= Chave.Preto.PEAO[indice8x8]; continue; }
+                    if (peca == Defs.CAVALO_PRETO) { chave ^= Chave.Preto.CAVALO[indice8x8]; continue; }
+                    if (peca == Defs.BISPO_PRETO) { chave ^= Chave.Preto.BISPO[indice8x8]; continue; }
+                    if (peca == Defs.TORRE_PRETA) { chave ^= Chave.Preto.TORRE[indice8x8]; continue; }
+                    if (peca == Defs.DAMA_PRETA) { chave ^= Chave.Preto.DAMA[indice8x8]; continue; }
+                    if (peca == Defs.REI_PRETO) { chave ^= Chave.Preto.REI[indice8x8]; continue; }
                 }
             }
 
-            if (tabuleiro.IndiceEnPassant != 0) chave ^= Zobrist.Chave.ENPASSANT[Defs.Converte12x12Para8x8(tabuleiro.IndiceEnPassant)];
+            if (tabuleiro.IndiceEnPassant != 0) chave ^= Chave.ENPASSANT[Defs.Converte12x12Para8x8(tabuleiro.IndiceEnPassant)];
 
-            chave ^= Zobrist.Chave.Roque.E1G1[tabuleiro.RoqueE1G1 ? 0 : 1];
-            chave ^= Zobrist.Chave.Roque.E1C1[tabuleiro.RoqueE1C1 ? 0 : 1];
-            chave ^= Zobrist.Chave.Roque.E8G8[tabuleiro.RoqueE8G8 ? 0 : 1];
-            chave ^= Zobrist.Chave.Roque.E8C8[tabuleiro.RoqueE8C8 ? 0 : 1];
+            chave ^= Chave.Roque.E1G1[tabuleiro.RoqueE1G1 ? 0 : 1];
+            chave ^= Chave.Roque.E1C1[tabuleiro.RoqueE1C1 ? 0 : 1];
+            chave ^= Chave.Roque.E8G8[tabuleiro.RoqueE8G8 ? 0 : 1];
+            chave ^= Chave.Roque.E8C8[tabuleiro.RoqueE8C8 ? 0 : 1];
 
-            if (tabuleiro.CorJogar == Defs.COR_PRETA) chave ^= Zobrist.Chave.COR;
+            if (tabuleiro.CorJogar == Cor.Preta) chave ^= Chave.COR;
 
             return chave;
         }
