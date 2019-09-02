@@ -11,7 +11,7 @@
         /// <summary>
         /// Peça que está se movendo.
         /// </summary>
-        public sbyte Peca = Defs.PECA_NENHUMA;
+        public Peca Peca = Peca.Nenhuma;
         /// <summary>
         /// Índice da casa de origem.
         /// </summary>
@@ -23,11 +23,11 @@
         /// <summary>
         /// Peça sendo capturada para movimentos de captura.
         /// </summary>
-        public sbyte PecaCaptura = Defs.PECA_NENHUMA;
+        public Peca PecaCaptura = Peca.Nenhuma;
         /// <summary>
         /// Peça para movimentos de promoção.
         /// </summary>
-        public sbyte PecaPromocao = Defs.PECA_NENHUMA;
+        public Peca PecaPromocao = Peca.Nenhuma;
         /// <summary>
         /// Índice da casa do peão sendo removido em capturas ep-passant.
         /// </summary>
@@ -43,7 +43,7 @@
         /// <param name="peca">Peça que está se movendo.</param>
         /// <param name="indice_origem">Índice da casa de origem.</param>
         /// <param name="indice_destino">Índice da casa de destino.</param>
-        public Movimento(sbyte peca, int indice_origem, int indice_destino)
+        public Movimento(Peca peca, int indice_origem, int indice_destino)
         {
             Peca = peca;
             IndiceOrigem = indice_origem;
@@ -58,7 +58,7 @@
         /// <param name="indice_origem">Índice da casa de origem.</param>
         /// <param name="indice_destino">Índice da casa de destino.</param>
         /// <param name="peca_captura">Peça capturada</param>
-        public Movimento(sbyte peca, int indice_origem, int indice_destino, sbyte peca_captura) : 
+        public Movimento(Peca peca, int indice_origem, int indice_destino, Peca peca_captura) : 
             this(peca, indice_origem, indice_destino)
         {
             PecaCaptura = peca_captura;
@@ -72,7 +72,7 @@
         /// <param name="indice_destino">Índice da casa de destino.</param>
         /// <param name="peca_captura">Peça sendo capturada</param>
         /// <param name="peca_promocao">Peça de promoção (Dama, Torre, Bispo ou Cavalo)</param>
-        public Movimento(sbyte peca, int indice_origem, int indice_destino, sbyte peca_captura, sbyte peca_promocao) :
+        public Movimento(Peca peca, int indice_origem, int indice_destino, Peca peca_captura, Peca peca_promocao) :
             this(peca, indice_origem, indice_destino)
         {
             PecaCaptura = peca_captura;
@@ -86,7 +86,7 @@
         /// <param name="indice_origem">Índice da casa de origem.</param>
         /// <param name="indice_destino">Índice da casa de destino.</param>
         /// <param name="indice_peao_enpassant">Índice da casa do peão sendo removido.</param>
-        public Movimento(sbyte peca, int indice_origem, int indice_destino, int indice_peao_enpassant) :
+        public Movimento(Peca peca, int indice_origem, int indice_destino, int indice_peao_enpassant) :
             this(peca, indice_origem, indice_destino)
         {
             IndicePeaoEnPassant = indice_peao_enpassant;
@@ -98,7 +98,7 @@
         /// <returns>Verdadeiro para capturas.</returns>
         public bool Captura()
         {
-            return PecaCaptura != Defs.PECA_NENHUMA;
+            return PecaCaptura != Peca.Nenhuma;
         }
 
         /// <summary>
@@ -107,7 +107,7 @@
         /// <returns>Verdadeiro para promoção.</returns>
         public bool Promocao()
         {
-            return PecaPromocao != Defs.PECA_NENHUMA;
+            return PecaPromocao != Peca.Nenhuma;
         }
 
         /// <summary>
@@ -125,7 +125,7 @@
         /// <returns>Verdadeiro para captura e promoção.</returns>
         public bool CapturaPromocao()
         {
-            return PecaPromocao != Defs.PECA_NENHUMA && PecaCaptura != Defs.PECA_NENHUMA;
+            return PecaPromocao != Peca.Nenhuma && PecaCaptura != Peca.Nenhuma;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@
         /// <returns>Verdadeiro para o movimento E1G1.</returns>
         public bool RoqueE1G1()
         {
-            return Peca == Defs.REI_BRANCO && IndiceOrigem == (int)Defs.INDICE.E1 && IndiceDestino == (int)Defs.INDICE.G1;
+            return Peca == Peca.ReiBranco && IndiceOrigem == (int)Defs.INDICE.E1 && IndiceDestino == (int)Defs.INDICE.G1;
         }
 
         /// <summary>
@@ -143,7 +143,7 @@
         /// <returns>Verdadeiro para o movimento E1C1.</returns>
         public bool RoqueE1C1()
         {
-            return Peca == Defs.REI_BRANCO && IndiceOrigem == (int)Defs.INDICE.E1 && IndiceDestino == (int)Defs.INDICE.C1;
+            return Peca == Peca.ReiBranco && IndiceOrigem == (int)Defs.INDICE.E1 && IndiceDestino == (int)Defs.INDICE.C1;
         }
 
         /// <summary>
@@ -152,7 +152,7 @@
         /// <returns>Verdadeiro para o movimento E8G8.</returns>
         public bool RoqueE8G8()
         {
-            return Peca == Defs.REI_PRETO && IndiceOrigem == (int)Defs.INDICE.E8 && IndiceDestino == (int)Defs.INDICE.G8;
+            return Peca == Peca.ReiPreto && IndiceOrigem == (int)Defs.INDICE.E8 && IndiceDestino == (int)Defs.INDICE.G8;
         }
 
         /// <summary>
@@ -161,7 +161,7 @@
         /// <returns>Verdadeiro para o movimento E8C8.</returns>
         public bool RoqueE8C8()
         {
-            return Peca == Defs.REI_PRETO && IndiceOrigem == (int)Defs.INDICE.E8 && IndiceDestino == (int)Defs.INDICE.C8;
+            return Peca == Peca.ReiPreto && IndiceOrigem == (int)Defs.INDICE.E8 && IndiceDestino == (int)Defs.INDICE.C8;
         }
 
         /// <summary>
@@ -174,7 +174,7 @@
 
             s += Defs.COORDENADAS[IndiceOrigem];
             s += Defs.COORDENADAS[IndiceDestino];
-            if (Promocao()) s += Defs.Letra(PecaPromocao);
+            if (Promocao()) s += PecaPromocao.ParaTexto();
 
             return s.ToLower();
         }
@@ -209,9 +209,9 @@
             int hash_code = base.GetHashCode();
             hash_code ^= IndiceOrigem;
             hash_code ^= IndiceDestino;
-            hash_code ^= Peca;
-            hash_code ^= PecaCaptura;
-            hash_code ^= PecaPromocao;
+            hash_code ^= (sbyte)Peca;
+            hash_code ^= (sbyte)PecaCaptura;
+            hash_code ^= (sbyte)PecaPromocao;
             return hash_code;
         }
 
@@ -226,7 +226,7 @@
             s += Defs.COORDENADAS[IndiceOrigem];
             s += Captura() ? "x" : "-";
             s += Defs.COORDENADAS[IndiceDestino];
-            if (Promocao()) s += Defs.Letra(PecaPromocao);
+            if (Promocao()) s += PecaPromocao.ParaTexto();
 
             return s.ToLower();
         }

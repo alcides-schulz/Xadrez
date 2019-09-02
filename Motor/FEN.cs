@@ -45,23 +45,24 @@ namespace Enxadrista
             int fileira = Defs.PRIMEIRA_FILEIRA;
             int coluna = Defs.PRIMEIRA_COLUNA;
 
-            foreach (char item in posicao_pecas) {
-                switch (item) {
-                    case 'r': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.TORRE_PRETA); break;
-                    case 'n': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.CAVALO_PRETO); break;
-                    case 'b': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.BISPO_PRETO); break;
-                    case 'q': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.DAMA_PRETA); break;
-                    case 'k': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.REI_PRETO); break;
-                    case 'p': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.PEAO_PRETO); break;
-                    case 'R': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.TORRE_BRANCA); break;
-                    case 'N': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.CAVALO_BRANCO); break;
-                    case 'B': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.BISPO_BRANCO); break;
-                    case 'Q': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.DAMA_BRANCA); break;
-                    case 'K': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.REI_BRANCO); break;
-                    case 'P': tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, Defs.PEAO_BRANCO); break;
-                    case '/': fileira += 1; coluna = Defs.PRIMEIRA_COLUNA; break;
-                    default: if (Char.IsDigit(item)) coluna += int.Parse(item.ToString()); break;
+            foreach (var caracter in posicao_pecas) {
+                if (char.IsDigit(caracter))
+                {
+                    coluna += int.Parse(caracter.ToString());
                 }
+                else
+                {
+                    switch (caracter) {
+                        case '/': 
+                            fileira += 1; 
+                            coluna = Defs.PRIMEIRA_COLUNA;
+                            break;
+                        default:
+                            tabuleiro.ColocaPeca(fileira * Defs.NUMERO_COLUNAS + coluna++, caracter.ParaPeca());
+                            break;
+                    }
+                }
+
             }
 
             tabuleiro.CorJogar = cor_jogar.ParaCor();
@@ -108,12 +109,12 @@ namespace Enxadrista
         {
             var desc = "";
 
-            for (int fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++) {
+            for (var fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++) {
                 if (desc != "") desc += "/";
-                int contador_casas_vazias = 0;
-                for (int coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++) {
-                    sbyte peca = tabuleiro.ObtemPeca(fileira * Defs.NUMERO_COLUNAS + coluna);
-                    if (peca == Defs.CASA_VAZIA) {
+                var contador_casas_vazias = 0;
+                for (var coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++) {
+                    var peca = tabuleiro.ObtemPeca(fileira * Defs.NUMERO_COLUNAS + coluna);
+                    if (peca == Peca.Nenhuma) {
                         contador_casas_vazias++;
                         continue;
                     }
@@ -121,7 +122,7 @@ namespace Enxadrista
                         desc += contador_casas_vazias.ToString();
                         contador_casas_vazias = 0;
                     }
-                    desc += Defs.Letra(peca);
+                    desc += peca.ParaTexto();
                 }
                 if (contador_casas_vazias != 0) {
                     desc += contador_casas_vazias.ToString();

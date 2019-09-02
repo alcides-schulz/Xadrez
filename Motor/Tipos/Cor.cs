@@ -19,7 +19,7 @@ namespace Enxadrista
     public static class CorExtensao
     {
         /// <summary>
-        /// Troca a cor
+        /// Troca a cor.
         /// </summary>
         public static Cor Invertida(this Cor cor)
         {

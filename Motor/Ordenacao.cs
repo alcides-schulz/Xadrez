@@ -79,7 +79,7 @@ namespace Enxadrista
         {
             if (movimento.Tatico()) return;
 
-            int indice_peca = IndicePeca(cor, movimento.Peca);
+            int indice_peca = IndicePeca(movimento.Peca);
             int indice_casa = Defs.Converte12x12Para8x8(movimento.IndiceDestino);
 
             Tabela[indice_peca][indice_casa] += profundidade;
@@ -122,7 +122,7 @@ namespace Enxadrista
                     movimento.ValorOrdenacao = ValorCaptura(movimento) * 10000;
                     continue;
                 }
-                int indice_peca = IndicePeca(cor, movimento.Peca);
+                int indice_peca = IndicePeca(movimento.Peca);
                 int indice_casa = Defs.Converte12x12Para8x8(movimento.IndiceDestino);
                 movimento.ValorOrdenacao = Tabela[indice_peca][indice_casa];
             }
@@ -143,10 +143,10 @@ namespace Enxadrista
         {
             Debug.Assert(movimento.Captura());
 
-            int tipo_peca_captura = Math.Abs(movimento.PecaCaptura);
-            int tipo_peca_atacante = Math.Abs(movimento.Peca);
+            var tipo_peca_captura = movimento.PecaCaptura.ParaTipo();
+            var tipo_peca_atacante = movimento.Peca.ParaTipo();
 
-            int valor = tipo_peca_captura * 6 + 5 - tipo_peca_atacante;
+            var valor = (int)tipo_peca_captura * 6 + 5 - (int)tipo_peca_atacante;
             if (movimento.Promocao()) valor -= 5;
 
             return valor;
@@ -161,13 +161,11 @@ namespace Enxadrista
         /// <param name="cor">Cor da peça.</param>
         /// <param name="peca">Tipo da peça.</param>
         /// <returns>Índice da peça.</returns>
-        private int IndicePeca(Cor cor, sbyte peca)
+        private int IndicePeca(Peca peca)
         {
-            int indice = Math.Abs(peca) - 1;
-            if (cor == Cor.Preta) indice += 6;
+            var indice = peca.ParaIndice();
             Debug.Assert(indice >= 0 && indice < NUMERO_PECAS);
             return indice;
         }
-
     }
 }

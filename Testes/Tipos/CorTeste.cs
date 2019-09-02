@@ -1,8 +1,7 @@
-﻿using Enxadrista;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 
-namespace UnitTest
+namespace Enxadrista.Tipos
 {
     public class CorTeste
     {
@@ -27,6 +26,13 @@ namespace UnitTest
             "w".ParaCor().Should().Be(Cor.Branca);
             "b".ParaCor().Should().Be(Cor.Preta);
             "-".ParaCor().Should().Be(Cor.Nenhuma);
+        }
+        
+        [Test]
+        public void ValidacaoTransformacao()
+        {
+            Cor.Branca.ParaTexto().ParaCor().Should().Be(Cor.Branca);
+            Cor.Preta.ParaTexto().ParaCor().Should().Be(Cor.Preta);
         }
         
         [Test]
