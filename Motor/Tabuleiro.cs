@@ -911,7 +911,7 @@ namespace Enxadrista
             Debug.Assert(Quadrados[indice] != Peca.Borda);
             Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
-            var cavalo = cor_atacante == Cor.Branca ? Peca.CavaloBranco : Peca.CavaloPreto;
+            var cavalo = TipoPeca.Cavalo.ParaPeca(cor_atacante);
 
             foreach (var movimento in Defs.Movimentos.CAVALO)
                 if (ObtemPeca(indice + movimento) == cavalo)
@@ -931,14 +931,16 @@ namespace Enxadrista
             Debug.Assert(Quadrados[indice] != Peca.Borda);
             Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
+            var torre = TipoPeca.Torre.ParaPeca(cor_atacante);
+            var dama = TipoPeca.Dama.ParaPeca(cor_atacante);
             foreach (var movimento in Defs.Movimentos.TORRE)
             {
                 var indice_destino = indice + movimento;
                 while (!BordaDoTabuleiro(indice_destino))
                 {
-                    var tipoPeca = ObtemPeca(indice_destino).ParaTipo();
-                    if (tipoPeca == TipoPeca.Torre || tipoPeca == TipoPeca.Dama) return true;
-                    if (tipoPeca != TipoPeca.Nenhum) break;
+                    var tipoPeca = ObtemPeca(indice_destino);
+                    if (tipoPeca == torre || tipoPeca == dama) return true;
+                    if (tipoPeca != Peca.Nenhuma) break;
                     indice_destino += movimento;
                 }
             }
@@ -957,14 +959,16 @@ namespace Enxadrista
             Debug.Assert(Quadrados[indice] != Peca.Borda);
             Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
+            var bispo = TipoPeca.Bispo.ParaPeca(cor_atacante);
+            var dama = TipoPeca.Dama.ParaPeca(cor_atacante);
             foreach (var movimento in Defs.Movimentos.BISPO)
             {
                 var indice_destino = indice + movimento;
                 while (!BordaDoTabuleiro(indice_destino))
                 {
-                    var tipoPeca = ObtemPeca(indice_destino).ParaTipo();
-                    if (tipoPeca == TipoPeca.Bispo || tipoPeca == TipoPeca.Dama) return true;
-                    if (tipoPeca != TipoPeca.Nenhum) break;
+                    var tipoPeca = ObtemPeca(indice_destino);
+                    if (tipoPeca == bispo || tipoPeca == dama) return true;
+                    if (tipoPeca != Peca.Nenhuma) break;
                     indice_destino += movimento;
                 }
             }
@@ -984,7 +988,7 @@ namespace Enxadrista
             Debug.Assert(cor_atacante == Cor.Branca || cor_atacante == Cor.Preta);
 
             foreach (var movimento in Defs.Movimentos.REI)
-                if (ObtemPeca(indice + movimento).ParaTipo() == TipoPeca.Rei)
+                if (ObtemPeca(indice + movimento) == TipoPeca.Rei.ParaPeca(cor_atacante))
                     return true;
 
             return false;
@@ -1058,7 +1062,7 @@ namespace Enxadrista
         {
             Debug.Assert(indice >= 0 && indice < Defs.INDICE_MAXIMO);
 
-            return Quadrados[indice].ParaCor().Equals(Cor.Branca);
+            return Quadrados[indice] >= Peca.PeaoBranco && Quadrados[indice] <= Peca.ReiBranco;
         }
 
         /// <summary>
@@ -1070,7 +1074,7 @@ namespace Enxadrista
         {
             Debug.Assert(indice >= 0 && indice < Defs.INDICE_MAXIMO);
 
-            return Quadrados[indice] >= Peca.ReiPreto && Quadrados[indice] <= Peca.PeaoPreto;
+            return Quadrados[indice] >= Peca.PeaoPreto && Quadrados[indice] <= Peca.ReiPreto;
         }
 
         /// <summary>

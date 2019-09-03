@@ -1,7 +1,9 @@
-﻿namespace Enxadrista
+﻿using System.Diagnostics;
+
+namespace Enxadrista
 {
     /// <summary>
-    /// Define tipos de peça com todas os tipos presentes no jogo.
+    ///     Define tipos de peça com todas os tipos presentes no jogo.
     /// </summary>
     public enum TipoPeca : sbyte
     {
@@ -11,24 +13,22 @@
         Bispo = 3,
         Torre = 4,
         Dama = 5,
-        Rei = 6,
+        Rei = 6
     }
-    
+
     /// <summary>
-    /// Define a peça com a sua respectiva cor. Esses valores foram escolhidos para facilitar a extração de informações.
-    /// Para indicar a cor da peça utilizamos o quarto bit, onde 0 indica branca e 1 indica preta.
-    /// 
+    ///     Define a peça com a sua respectiva cor.
     /// </summary>
     public enum Peca : sbyte
     {
         Borda = 0,
+        Nenhuma = 1,
         PeaoBranco = 2,
         CavaloBranco = 3,
         BispoBranco = 4,
         TorreBranca = 5,
         DamaBranca = 6,
         ReiBranco = 7,
-        Nenhuma = 8,
         PeaoPreto = 10,
         CavaloPreto = 11,
         BispoPreto = 12,
@@ -38,28 +38,28 @@
     }
 
     /// <summary>
-    /// Classe auxiliar com funções de pecas.
+    ///     Classe auxiliar com funções de pecas.
     /// </summary>
     public static class PecaExtensao
     {
         /// <summary>
-        /// Transforma a peça em uma lista de indices válidos entre 0 e a quantidade total de peças (12). 
+        ///     Transforma a peça em uma lista de indices válidos entre 0 e a quantidade total de peças (12).
         /// </summary>
         public static int ParaIndice(this Peca peca)
         {
-            return (int) peca  - 2 * (1 + (int) peca.ParaCor());
+            return (int) peca - 2 * (1 + (int) peca.ParaCor());
         }
-        
+
         /// <summary>
-        /// Transforma peça em tipo de peça.
+        ///     Transforma peça em tipo de peça.
         /// </summary>
         public static TipoPeca ParaTipo(this Peca peca)
         {
             return (TipoPeca) (((int) peca & 0x7) - 1);
         }
-        
+
         /// <summary>
-        /// Transforma peça em representação de texto.
+        ///     Transforma peça em representação de texto.
         /// </summary>
         public static string ParaTexto(this Peca peca)
         {
@@ -68,7 +68,7 @@
         }
 
         /// <summary>
-        /// Transforma um caractere em uma Peça.
+        ///     Transforma um caractere em uma Peça.
         /// </summary>
         public static Peca ParaPeca(this char peca)
         {
@@ -89,21 +89,45 @@
                 default: return Peca.Nenhuma;
             }
         }
-        
+
         /// <summary>
-        /// Calcula a cor de uma peça.
+        ///     Calcula a cor de uma peça.
         /// </summary>
         public static Cor ParaCor(this Peca peca)
         {
-            return (Cor)((int)peca >> 3);
+            switch (peca)
+            {
+                case Peca.PeaoBranco: return Cor.Branca;
+                case Peca.BispoBranco: return Cor.Branca;
+                case Peca.CavaloBranco: return Cor.Branca;
+                case Peca.TorreBranca: return Cor.Branca;
+                case Peca.DamaBranca: return Cor.Branca;
+                case Peca.ReiBranco: return Cor.Branca;
+                case Peca.CavaloPreto: return Cor.Preta;
+                case Peca.BispoPreto: return Cor.Preta;
+                case Peca.PeaoPreto: return Cor.Preta;
+                case Peca.TorrePreta: return Cor.Preta;
+                case Peca.DamaPreta: return Cor.Preta;
+                case Peca.ReiPreto: return Cor.Preta;
+                default: return Cor.Nenhuma;
+            }
         }
-        
+
         /// <summary>
-        /// Inverte a cor de uma peça.
+        ///     Inverte a cor de uma peça.
         /// </summary>
         public static Peca InverteCor(this Peca peca)
         {
-            return (Peca)((int)peca ^ 0x8);
+            Debug.Assert(peca != Peca.Borda && peca != Peca.Nenhuma);
+            return (Peca) ((int) peca ^ 0x8);
+        }
+
+        /// <summary>
+        ///     Inverte a cor de uma peça.
+        /// </summary>
+        public static Peca ParaPeca(this TipoPeca tipoPeca, Cor cor)
+        {
+            return (Peca) (((int) tipoPeca + 1) ^ ((int) cor * 0x8));
         }
     }
 }

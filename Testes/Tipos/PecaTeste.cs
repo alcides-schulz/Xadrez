@@ -60,7 +60,7 @@ namespace Enxadrista.Tipos
         }
 
         [Test]
-        public void ParaPeca()
+        public void CaractereParaPeca()
         {
             'P'.ParaPeca().Should().Be(Peca.PeaoBranco);
             'N'.ParaPeca().Should().Be(Peca.CavaloBranco);
@@ -111,6 +111,24 @@ namespace Enxadrista.Tipos
             Peca.TorrePreta.InverteCor().Should().Be(Peca.TorreBranca);
             Peca.DamaPreta.InverteCor().Should().Be(Peca.DamaBranca);
             Peca.ReiPreto.InverteCor().Should().Be(Peca.ReiBranco);
+        }
+        
+        [Test]
+        public void TipoPecaParaPeca()
+        {
+            TipoPeca.Peao.ParaPeca(Cor.Branca).Should().Be(Peca.PeaoBranco);
+            TipoPeca.Cavalo.ParaPeca(Cor.Branca).Should().Be(Peca.CavaloBranco);
+            TipoPeca.Bispo.ParaPeca(Cor.Branca).Should().Be(Peca.BispoBranco);
+            TipoPeca.Torre.ParaPeca(Cor.Branca).Should().Be(Peca.TorreBranca);
+            TipoPeca.Dama.ParaPeca(Cor.Branca).Should().Be(Peca.DamaBranca);
+            TipoPeca.Rei.ParaPeca(Cor.Branca).Should().Be(Peca.ReiBranco);
+            
+            TipoPeca.Peao.ParaPeca(Cor.Preta).Should().Be(Peca.PeaoPreto);
+            TipoPeca.Cavalo.ParaPeca(Cor.Preta).Should().Be(Peca.CavaloPreto);
+            TipoPeca.Bispo.ParaPeca(Cor.Preta).Should().Be(Peca.BispoPreto);
+            TipoPeca.Torre.ParaPeca(Cor.Preta).Should().Be(Peca.TorrePreta);
+            TipoPeca.Dama.ParaPeca(Cor.Preta).Should().Be(Peca.DamaPreta);
+            TipoPeca.Rei.ParaPeca(Cor.Preta).Should().Be(Peca.ReiPreto);
         }
     }
 }
