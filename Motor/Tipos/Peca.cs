@@ -97,18 +97,20 @@ namespace Enxadrista
         {
             switch (peca)
             {
-                case Peca.PeaoBranco: return Cor.Branca;
-                case Peca.BispoBranco: return Cor.Branca;
-                case Peca.CavaloBranco: return Cor.Branca;
-                case Peca.TorreBranca: return Cor.Branca;
-                case Peca.DamaBranca: return Cor.Branca;
-                case Peca.ReiBranco: return Cor.Branca;
-                case Peca.CavaloPreto: return Cor.Preta;
-                case Peca.BispoPreto: return Cor.Preta;
-                case Peca.PeaoPreto: return Cor.Preta;
-                case Peca.TorrePreta: return Cor.Preta;
-                case Peca.DamaPreta: return Cor.Preta;
-                case Peca.ReiPreto: return Cor.Preta;
+                case Peca.PeaoBranco:
+                case Peca.BispoBranco:
+                case Peca.CavaloBranco:
+                case Peca.TorreBranca:
+                case Peca.DamaBranca:
+                case Peca.ReiBranco:
+                    return Cor.Branca;
+                case Peca.CavaloPreto:
+                case Peca.BispoPreto: 
+                case Peca.PeaoPreto: 
+                case Peca.TorrePreta: 
+                case Peca.DamaPreta:
+                case Peca.ReiPreto:
+                    return Cor.Preta;
                 default: return Cor.Nenhuma;
             }
         }
