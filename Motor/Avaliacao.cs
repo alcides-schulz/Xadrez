@@ -1,4 +1,6 @@
-﻿namespace Enxadrista
+﻿using System;
+
+namespace Enxadrista
 {
     /// <summary>
     /// Avalia a posição atual no tabuleiro e atribui um valor. 
@@ -79,8 +81,8 @@
             public int IndiceFileira1;
             public int IndiceFileira7;
             public int DirecaoEmFrente;
-            public sbyte PeaoAmigo;
-            public sbyte PeaoInimigo;
+            public Peca PeaoAmigo;
+            public Peca PeaoInimigo;
         }
 
         /// <summary>
@@ -89,7 +91,7 @@
         private class DadosRei
         {
             public int[] DirecaoEmFrente;
-            public sbyte PeaoAmigo;
+            public Peca PeaoAmigo;
             public int[] TabelaInicio;
         }
 
@@ -110,22 +112,22 @@
             DadosTorreBranca.IndiceFileira1 = (int)Defs.INDICE.A1;
             DadosTorreBranca.IndiceFileira7 = (int)Defs.INDICE.A7;
             DadosTorreBranca.DirecaoEmFrente = Defs.POSICAO_NORTE;
-            DadosTorreBranca.PeaoAmigo = Defs.PEAO_BRANCO;
-            DadosTorreBranca.PeaoInimigo = Defs.PEAO_PRETO;
+            DadosTorreBranca.PeaoAmigo = Peca.PeaoBranco;
+            DadosTorreBranca.PeaoInimigo = Peca.PeaoPreto;
 
             DadosTorrePreta.Pontuacao = Preto;
             DadosTorrePreta.IndiceFileira1 = (int)Defs.INDICE.A8;
             DadosTorrePreta.IndiceFileira7 = (int)Defs.INDICE.A2;
             DadosTorrePreta.DirecaoEmFrente = Defs.POSICAO_SUL;
-            DadosTorrePreta.PeaoAmigo = Defs.PEAO_PRETO;
-            DadosTorrePreta.PeaoInimigo = Defs.PEAO_BRANCO;
+            DadosTorrePreta.PeaoAmigo = Peca.PeaoPreto;
+            DadosTorrePreta.PeaoInimigo = Peca.PeaoBranco;
 
             DadosReiBranco.DirecaoEmFrente = new int[] { Defs.POSICAO_NOROESTE, Defs.POSICAO_NORTE, Defs.POSICAO_NORDESTE };
-            DadosReiBranco.PeaoAmigo = Defs.PEAO_BRANCO;
+            DadosReiBranco.PeaoAmigo = Peca.PeaoBranco;
             DadosReiBranco.TabelaInicio = Pontuacao.Tabela.REI_BRANCO_INICIO;
 
             DadosReiPreto.DirecaoEmFrente = new int[] { Defs.POSICAO_SUDOESTE, Defs.POSICAO_SUL, Defs.POSICAO_SUDESTE };
-            DadosReiPreto.PeaoAmigo = Defs.PEAO_PRETO;
+            DadosReiPreto.PeaoAmigo = Peca.PeaoPreto;
             DadosReiPreto.TabelaInicio = Pontuacao.Tabela.REI_PRETO_INICIO;
         }
 
@@ -164,27 +166,52 @@
         /// </remarks>
         private void AvaliaTabuleiro()
         {
-            for (int fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++) {
+            for (var fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++) {
 
-                for (int coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++) {
+                for (var coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++) {
 
-                    int indice = fileira * Defs.NUMERO_COLUNAS + coluna;
-                    sbyte peca = Tabuleiro.ObtemPeca(indice);
-                    if (peca == Defs.CASA_VAZIA) continue;
-
-                    if (peca == Defs.PEAO_BRANCO) { AvaliaPeaoBranco(indice); continue; }
-                    if (peca == Defs.CAVALO_BRANCO) { AvaliaCavalo(Branco, indice); continue; }
-                    if (peca == Defs.BISPO_BRANCO) { AvaliaBispo(Branco, indice); continue; }
-                    if (peca == Defs.TORRE_BRANCA) { AvaliaTorre(Branco, indice, DadosTorreBranca); continue; }
-                    if (peca == Defs.DAMA_BRANCA) { AvaliaDama(Branco, indice); continue; }
-                    if (peca == Defs.REI_BRANCO) { AvaliaRei(Branco, indice, DadosReiBranco); continue; }
-
-                    if (peca == Defs.PEAO_PRETO) { AvaliaPeaoPreto(indice); continue; }
-                    if (peca == Defs.CAVALO_PRETO) { AvaliaCavalo(Preto, indice); continue; }
-                    if (peca == Defs.BISPO_PRETO) { AvaliaBispo(Preto, indice); continue; }
-                    if (peca == Defs.TORRE_PRETA) { AvaliaTorre(Preto, indice, DadosTorrePreta); continue; }
-                    if (peca == Defs.DAMA_PRETA) { AvaliaDama(Preto, indice); continue; }
-                    if (peca == Defs.REI_PRETO) { AvaliaRei(Preto, indice, DadosReiPreto); continue; }
+                    var indice = fileira * Defs.NUMERO_COLUNAS + coluna;
+                    var peca = Tabuleiro.ObtemPeca(indice);
+                    switch (peca)
+                    {
+                        case Peca.Nenhuma: break;
+                        case Peca.PeaoBranco:
+                            AvaliaPeaoBranco(indice); 
+                            break;
+                        case Peca.CavaloBranco:
+                            AvaliaCavalo(Branco, indice);
+                            break;
+                        case Peca.BispoBranco:
+                            AvaliaBispo(Branco, indice);
+                            break;
+                        case Peca.TorreBranca:
+                            AvaliaTorre(Branco, indice, DadosTorreBranca);
+                            break;
+                        case Peca.DamaBranca:
+                            AvaliaDama(Branco, indice);
+                            break;
+                        case Peca.ReiBranco:
+                            AvaliaRei(Branco, indice, DadosReiBranco);
+                            break;
+                        case Peca.PeaoPreto:
+                            AvaliaPeaoPreto(indice); 
+                            break;
+                        case Peca.CavaloPreto:
+                            AvaliaCavalo(Preto, indice);
+                            break;
+                        case Peca.BispoPreto:
+                            AvaliaBispo(Preto, indice);
+                            break;
+                        case Peca.TorrePreta:
+                            AvaliaTorre(Preto, indice, DadosTorreBranca);
+                            break;
+                        case Peca.DamaPreta:
+                            AvaliaDama(Preto, indice);
+                            break;
+                        case Peca.ReiPreto:
+                            AvaliaRei(Preto, indice, DadosReiBranco);
+                            break;
+                    }
                 }
             }
         }

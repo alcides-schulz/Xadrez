@@ -1,51 +1,125 @@
 ﻿namespace Enxadrista
 {
     /// <summary>
-    /// Gera chave zobrist para a posição.
+    ///     Gera chave zobrist para a posição.
     /// </summary>
-    /// 
     /// <remarks>
-    /// Método Zobrist
-    /// --------------
-    /// Este componente é responsável por gerar uma chave "única" para uma 
-    /// posição de xadrez. Essa chave é gerada usando o método Zobrist.
-    /// Na realidade, não podemos ter, de uma forma prática, uma chave única
-    /// para todas as posições de xadrez, mas esse método nos permite gerar 
-    /// uma chave que seja útil para um motor de xadrez.
-    /// É possível ter colisões de chave, mas esse risco é mínimo e aceitável 
-    /// para o motor de xadrez.
-    /// A chave da posição será usada para detectar a repetição da posição, 
-    /// como na regra de três repetições, mas mais importante para a tabela 
-    /// de transposição, que requer uma chave única para a posição.
-    /// 
-    /// Functionamento
-    /// --------------
-    /// Basicamente, temos um número aleatório para cada peça, em cada quadrado
-    /// para cada cor que são combinados usando o operador lógico XOR, chamado 
-    /// "ou exclusivo".
-    /// Também incluímos outras informações, como cor, estado roque, etc.
-    /// E teremos um número de 64 bits que é mais ou menos único para a posição.
-    /// Veja o método abaixo para mais detalhes.
-    /// 
-    /// Origem dos números aleatórios
-    /// -----------------------------
-    /// Os números aleatórios abaixo vêm do meu outro motor Tucano. Você pode gerar
-    /// esses números usando a função "random()". Mas se você tiver o conjunto 
-    /// completo pré-gerado, você sempre obtém os mesmos resultados toda vez que você
-    /// executa seu programa em computadores diferentes. Digamos que isso seja uma coisa
-    /// aleatória a menos no seu motor, que já é muito complexo.
-    /// 
+    ///     Método Zobrist
+    ///     --------------
+    ///     Este componente é responsável por gerar uma chave "única" para uma
+    ///     posição de xadrez. Essa chave é gerada usando o método Zobrist.
+    ///     Na realidade, não podemos ter, de uma forma prática, uma chave única
+    ///     para todas as posições de xadrez, mas esse método nos permite gerar
+    ///     uma chave que seja útil para um motor de xadrez.
+    ///     É possível ter colisões de chave, mas esse risco é mínimo e aceitável
+    ///     para o motor de xadrez.
+    ///     A chave da posição será usada para detectar a repetição da posição,
+    ///     como na regra de três repetições, mas mais importante para a tabela
+    ///     de transposição, que requer uma chave única para a posição.
+    ///     Functionamento
+    ///     --------------
+    ///     Basicamente, temos um número aleatório para cada peça, em cada quadrado
+    ///     para cada cor que são combinados usando o operador lógico XOR, chamado
+    ///     "ou exclusivo".
+    ///     Também incluímos outras informações, como cor, estado roque, etc.
+    ///     E teremos um número de 64 bits que é mais ou menos único para a posição.
+    ///     Veja o método abaixo para mais detalhes.
+    ///     Origem dos números aleatórios
+    ///     -----------------------------
+    ///     Os números aleatórios abaixo vêm do meu outro motor Tucano. Você pode gerar
+    ///     esses números usando a função "random()". Mas se você tiver o conjunto
+    ///     completo pré-gerado, você sempre obtém os mesmos resultados toda vez que você
+    ///     executa seu programa em computadores diferentes. Digamos que isso seja uma coisa
+    ///     aleatória a menos no seu motor, que já é muito complexo.
     /// </remarks>
     public class Zobrist
     {
         /// <summary>
-        /// Contém todos os números aleatórios necessários para a geração de chaves.
+        ///     Gera a chave para a posição atual do tabuleiro.
+        /// </summary>
+        /// <remarks>
+        ///     Aqui estamos gerando a chave para a posição sempre que tivermos uma nova posição.
+        ///     A maioria dos programas irá fazer isso de forma incremental, apenas atualizando
+        ///     os elementos que mudaram quando o movimento foi feito, exemplo a peça do movimento.
+        ///     Isso é possível por causa da forma como o "ou exclusivo" funciona.
+        /// </remarks>
+        /// <param name="tabuleiro">Tabuleiro.</param>
+        /// <returns>Chave da posição.</returns>
+        public static ulong ObtemChave(Tabuleiro tabuleiro)
+        {
+            ulong chave = 0;
+
+            for (var fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++)
+            for (var coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++)
+            {
+                var indice12x12 = fileira * Defs.NUMERO_COLUNAS + coluna;
+                var peca = tabuleiro.ObtemPeca(indice12x12);
+                if (peca == Peca.Nenhuma) continue;
+                var indice8x8 = Defs.Converte12x12Para8x8(indice12x12);
+
+                switch (peca)
+                {
+                    case Peca.PeaoBranco:
+                        chave ^= Chave.Branco.PEAO[indice8x8];
+                        break;
+                    case Peca.CavaloBranco:
+                        chave ^= Chave.Branco.CAVALO[indice8x8];
+                        break;
+                    case Peca.BispoBranco:
+                        chave ^= Chave.Branco.BISPO[indice8x8];
+                        break;
+                    case Peca.TorreBranca:
+                        chave ^= Chave.Branco.TORRE[indice8x8];
+                        break;
+                    case Peca.DamaBranca:
+                        chave ^= Chave.Branco.DAMA[indice8x8];
+                        break;
+                    case Peca.ReiBranco:
+                        chave ^= Chave.Branco.REI[indice8x8];
+                        break;
+                    case Peca.PeaoPreto:
+                        chave ^= Chave.Preto.PEAO[indice8x8];
+                        break;
+                    case Peca.CavaloPreto:
+                        chave ^= Chave.Preto.CAVALO[indice8x8];
+                        break;
+                    case Peca.BispoPreto:
+                        chave ^= Chave.Preto.BISPO[indice8x8];
+                        break;
+                    case Peca.TorrePreta:
+                        chave ^= Chave.Preto.TORRE[indice8x8];
+                        break;
+                    case Peca.DamaPreta:
+                        chave ^= Chave.Preto.DAMA[indice8x8];
+                        break;
+                    case Peca.ReiPreto:
+                        chave ^= Chave.Preto.REI[indice8x8];
+                        break;
+                }
+            }
+
+            if (tabuleiro.IndiceEnPassant != 0)
+                chave ^= Chave.ENPASSANT[Defs.Converte12x12Para8x8(tabuleiro.IndiceEnPassant)];
+
+            chave ^= Chave.Roque.E1G1[tabuleiro.RoqueE1G1 ? 0 : 1];
+            chave ^= Chave.Roque.E1C1[tabuleiro.RoqueE1C1 ? 0 : 1];
+            chave ^= Chave.Roque.E8G8[tabuleiro.RoqueE8G8 ? 0 : 1];
+            chave ^= Chave.Roque.E8C8[tabuleiro.RoqueE8C8 ? 0 : 1];
+
+            if (tabuleiro.CorJogar == Cor.Preta) chave ^= Chave.COR;
+
+            return chave;
+        }
+
+        /// <summary>
+        ///     Contém todos os números aleatórios necessários para a geração de chaves.
         /// </summary>
         public class Chave
         {
             public const ulong COR = 0x6CA3EC67E69AA24C;
 
-            public static readonly ulong[] ENPASSANT = {
+            public static readonly ulong[] ENPASSANT =
+            {
                 0xB366D1A55AC34195, 0x60D3FCFBCF572684, 0x672F9B58D7DFE3F8, 0xE09ACCE13480CBCE,
                 0xFEA61BE2004B3621, 0xD169BC626DC8EEFF, 0xFF7171B1307B257B, 0x637CD3DB2060DBAD,
                 0xE66D5CBF3C16EA7E, 0x2827BBFEDEC37D56, 0xC5981B79FA1AB2C5, 0x5673E0CE3F240744,
@@ -61,20 +135,21 @@
                 0x35201733DA886988, 0x3DFBE7E95B17601B, 0x2EF17906F293C711, 0x25DCE275AE00BF36,
                 0xD7FCDAB63DA69449, 0x0161CAF4B6173800, 0x3231842170D70B5C, 0xCE781B16B43E696B,
                 0xBEA2B5125E2C91AE, 0xADE63E0CF7DC2584, 0xC47784260F6E7826, 0x0610C765B8066228,
-                0x2814D09272609BE1, 0xAC8151BD42CBC1A8, 0xBC680D7DC1F5D4E0, 0x8200AAB8044DBCE4,
+                0x2814D09272609BE1, 0xAC8151BD42CBC1A8, 0xBC680D7DC1F5D4E0, 0x8200AAB8044DBCE4
             };
 
             public class Roque
             {
-                public static readonly ulong[] E1G1 = { 0x4CB1297B347D9184, 0xDAF24440D43B9E43 };
-                public static readonly ulong[] E1C1 = { 0x0981309987EC4A67, 0x0D7D7C634883A7BB };
-                public static readonly ulong[] E8G8 = { 0x50DAC80A753049B4, 0xD2203D893B0399E6 };
-                public static readonly ulong[] E8C8 = { 0xD6AB15746539DAC2, 0x43EC3CFA891AE17D };
+                public static readonly ulong[] E1G1 = {0x4CB1297B347D9184, 0xDAF24440D43B9E43};
+                public static readonly ulong[] E1C1 = {0x0981309987EC4A67, 0x0D7D7C634883A7BB};
+                public static readonly ulong[] E8G8 = {0x50DAC80A753049B4, 0xD2203D893B0399E6};
+                public static readonly ulong[] E8C8 = {0xD6AB15746539DAC2, 0x43EC3CFA891AE17D};
             }
 
             public class Branco
             {
-                public static readonly ulong[] PEAO = {
+                public static readonly ulong[] PEAO =
+                {
                     0x152A58F9E889607C, 0x2F2810AF5A1A8312, 0x69F12DA056E9FE7B, 0x2A23B15BCB715063,
                     0x9BAF26235CA877B8, 0xC0E34F0ECE76631F, 0x0133097D088D52B8, 0x5794D68A7EF654FA,
                     0xB35C1658CC6CF213, 0x2F2D90978305BAD4, 0x03202519543A6693, 0xF9E022EDC7D3EFAD,
@@ -90,9 +165,11 @@
                     0xAAF84718BA67BB28, 0x8A9E4B050CF3E3E6, 0x15CE68C2E9A03F95, 0xA93E0DCD57A37127,
                     0x712A23FEB1B09ABD, 0x00CD79D87DD6D4D2, 0xBB042ACA2BF40745, 0x2CC999A89B1A7F4B,
                     0xBBE6337EF90B2D13, 0x9E28B1A6F0ACB87D, 0xE919BABDD2A96C44, 0xF2CC11B5D1E015D2,
-                    0x89D56FAF9C7FFA13, 0x7651E0DB62663020, 0xB541540DDDF7E931, 0x771C93C720B77D96,
+                    0x89D56FAF9C7FFA13, 0x7651E0DB62663020, 0xB541540DDDF7E931, 0x771C93C720B77D96
                 };
-                public static readonly ulong[] CAVALO = {
+
+                public static readonly ulong[] CAVALO =
+                {
                     0x68EB0834C48F6859, 0x61820F91565373B7, 0xCC52E2D0C9D2852F, 0x1C8B891D6840FFDC,
                     0x587C6787A00066A5, 0x7947A315CBCE08DF, 0x6BF78452A58A8979, 0x41A56491FE3A1AD5,
                     0x36A1660919D5628F, 0x8FED64F87184A600, 0xCE5E65EF2C903633, 0xDE5CFACED553EC66,
@@ -108,9 +185,11 @@
                     0xDFDD4CB65BA18779, 0x206F647D1D132E32, 0xB776A6144AE8A149, 0x5D2CD7EFBED2DFF5,
                     0x8619E1713DC9D513, 0xB8B3D16E3DC503C4, 0x303C98A21CBAD415, 0x07CEC8C7DF98A13E,
                     0xF7826EC516D9D7E0, 0x943386BACDA9F395, 0xC29F23B3E8094A73, 0xFA193271196EFA16,
-                    0x9E58630D52AC1D3D, 0x6ECEF94F7D5A81C3, 0x927D6A462AAE7096, 0xBC258BE6785073D8,
+                    0x9E58630D52AC1D3D, 0x6ECEF94F7D5A81C3, 0x927D6A462AAE7096, 0xBC258BE6785073D8
                 };
-                public static readonly ulong[] BISPO = {
+
+                public static readonly ulong[] BISPO =
+                {
                     0x176FA00325B31E78, 0xFBA54B582173B56C, 0xA5E3CE4CFF5EFE76, 0xEDEEE1A1D2B90E8E,
                     0xB4C5D503E8C81E46, 0xA853C0C2B2387393, 0x72B78E40774D8160, 0x5693ECC59CE0396E,
                     0x93639726211F1375, 0x92DB874FE8DFC644, 0x86EC90FA14ECA4CF, 0x0481F454CA90C1A0,
@@ -126,9 +205,11 @@
                     0x6ABBF8C2CE1139FB, 0x01C7B305A15270BD, 0xDAF417ED7AAC0300, 0xFC84FFE0D5A2ACAD,
                     0x261BC897B0EB570F, 0xEFDFE795637D39DA, 0x7B76698EBF9ECE7C, 0x11FFE9DF28F26DA1,
                     0x1E9144D47DA27907, 0x67EA8771BFB9F0F5, 0x88DABC9B5448830D, 0x5D3CD35D69B20B8C,
-                    0xBA76C518F1E4E6B3, 0x54867F07244D2112, 0xBA2C389CF625D27B, 0x8D17857FE5181451,
+                    0xBA76C518F1E4E6B3, 0x54867F07244D2112, 0xBA2C389CF625D27B, 0x8D17857FE5181451
                 };
-                public static readonly ulong[] TORRE = {
+
+                public static readonly ulong[] TORRE =
+                {
                     0x1E000233E0152018, 0xC2398B93611B8472, 0x0B2B826400AE3990, 0xA13598F9A17AC2BB,
                     0xAE53A567BD206FDD, 0x592F80A4F153037C, 0x4E7B169648F65DAF, 0x83C846358B893B06,
                     0xCFEA657FFA6B4A04, 0x719FF12D82B5DFE0, 0x3252E28A7A70E9A6, 0xAC376F901229FD9D,
@@ -144,9 +225,11 @@
                     0x3EDC690E7DD75FEE, 0x214F2A2EF75117C9, 0x6ACE4C9D9A0B23FB, 0x782E6FB16AB34D90,
                     0x64F80C41E93461F0, 0xAF79A0DE569E8754, 0x6BB9C8DFB7BF89BB, 0x46C51FFE5FC61EB1,
                     0x0D5B2D7C5D8545C6, 0xF0F5B95B187DA4DD, 0x57543DC41C86BD53, 0x1A1EC08AE54A0874,
-                    0xEAF842A21C493FB7, 0x45A0A89272DD264D, 0x0C555461C77E8A1E, 0x025A65A363AEE13F,
+                    0xEAF842A21C493FB7, 0x45A0A89272DD264D, 0x0C555461C77E8A1E, 0x025A65A363AEE13F
                 };
-                public static readonly ulong[] DAMA = {
+
+                public static readonly ulong[] DAMA =
+                {
                     0x61E4409767D5CA7A, 0xD1E707D31AEB5D08, 0xC8B26166B6E0C5BD, 0x3147DD340B2422A3,
                     0x2AEDBF834328ECA9, 0x9F02EB4C98C058D9, 0xB04A3CA4C5A301A5, 0xEEAA97F15AD4E9DC,
                     0xCA7E3CE65DD98B7C, 0x2DE24C2238A7F714, 0xDE1926EFEA3C7BF8, 0xAD655C9036C06E9C,
@@ -162,9 +245,11 @@
                     0x6786AB68B7134692, 0x89ADCD885CAF4F95, 0x698DA2752A248378, 0xD9116170ECA478DD,
                     0x3E768F4024C5F6F6, 0xE8A911D8DEC9BC72, 0x080ED1E4883DD910, 0xA9861E35CCB4AEB0,
                     0xC827B08CC6A2335F, 0x5EFD1206C995438E, 0x0193AF7E25E46083, 0x46A756090ED6EF0F,
-                    0x34A5387953FA5189, 0x3845BC8124AAE9B4, 0x810102E505D8D2C1, 0x2C562160D0B39CE4,
+                    0x34A5387953FA5189, 0x3845BC8124AAE9B4, 0x810102E505D8D2C1, 0x2C562160D0B39CE4
                 };
-                public static readonly ulong[] REI = {
+
+                public static readonly ulong[] REI =
+                {
                     0x00643CFDD1143ADC, 0x3F55C7A77482FB6E, 0x03005DA46B16723E, 0xB10D4C61E656F484,
                     0x385BFA27010165EB, 0x54F5F94A181ED3EB, 0xE12CAFBB78759083, 0x64A2D9097B635030,
                     0xA966B929E38A1D1D, 0x814AF1BD24555021, 0x6FC77A7A916E1306, 0x07F39B6562F2A2DD,
@@ -180,13 +265,14 @@
                     0xF802BDA1A5E57B28, 0x3D8B90A2AF0D0462, 0xD1BA27C3CC19E0B9, 0x2015DF2F6A1624D4,
                     0x965F4461C1BF5761, 0xA4961F14E39EE974, 0x5F7D4FEE14394FBD, 0x15AAE795585DD7DD,
                     0x5B3EE5D6A919F712, 0x69A8970564A0C147, 0xB3214A19758093DF, 0xC0BE3FE8C8F7FD9C,
-                    0x9445536E7B168567, 0x3A9D316395560387, 0x38375976B853A7A4, 0xF372FDC8A8C7C980,
+                    0x9445536E7B168567, 0x3A9D316395560387, 0x38375976B853A7A4, 0xF372FDC8A8C7C980
                 };
             }
 
             public class Preto
             {
-                public static readonly ulong[] PEAO = {
+                public static readonly ulong[] PEAO =
+                {
                     0xFEC7E9370FF14E80, 0xC72D82A03381DBE4, 0xB69D396D866F4E52, 0x1B6E5492A9B1BEA0,
                     0xDC669C225CC9ECE1, 0x9E30B32D3F0F14F0, 0xD22ACF2A4C8D6D87, 0x0B18F08D7DD3B842,
                     0x4AEBE61A039D0428, 0xBD81AB8EBF5E6F46, 0xE4E5C97AFD27A60E, 0xC3CA5C1FA16268A0,
@@ -202,9 +288,11 @@
                     0xCB988D89966DCAEE, 0x2790770D6C0B626E, 0xB5DB9AD9C109BAFE, 0x562382FCD1A887B5,
                     0x887A6E77BE410472, 0xE468DD22ACBD5E9B, 0x690D5E4BDED14101, 0xBE9BAF2CCB619478,
                     0xCAE91528D50A861D, 0x40A03DE65B3F5248, 0x5F84F5E6307CBEA6, 0xCE4B7A39564DB25B,
-                    0x0EA0B05113BF8493, 0x32CF6DC9807F4C07, 0x2A001D6686104405, 0x58188FEA088A2951,
+                    0x0EA0B05113BF8493, 0x32CF6DC9807F4C07, 0x2A001D6686104405, 0x58188FEA088A2951
                 };
-                public static readonly ulong[] CAVALO = {
+
+                public static readonly ulong[] CAVALO =
+                {
                     0x4A576713788BA2A5, 0xAE16804DBD883AAB, 0xE8112712120AA939, 0x635293D6ABD54736,
                     0x14D57C459CA2D2CD, 0x55DB1185BD30FC2A, 0x6C4C8A41CD09BBF3, 0xCF74F58D52C72C53,
                     0xC555FF87163185DB, 0xAC2EB326E36318C3, 0x62FC30405A886C52, 0xF0D17ECF1CADCE26,
@@ -220,9 +308,11 @@
                     0xF59018F074CBC326, 0x5A649458F14855FB, 0x107A0A076A155185, 0x6C22B6E9B1FB97C1,
                     0x188FC051386ABF67, 0xB1491091A1C52C26, 0x23C6C84DCB26C01D, 0x7FC0780C8E5F9EC1,
                     0x036DF6543A9615C2, 0xFB8BEC39FF11EAD1, 0xE2468B341BF78819, 0x1D37110B1977CB8C,
-                    0x807F7BF1C014B84C, 0x3F04484301C5DB73, 0x36634404F62D2326, 0x62AF1CD5EC9B3E99,
+                    0x807F7BF1C014B84C, 0x3F04484301C5DB73, 0x36634404F62D2326, 0x62AF1CD5EC9B3E99
                 };
-                public static readonly ulong[] BISPO = {
+
+                public static readonly ulong[] BISPO =
+                {
                     0xE85AA8623F04948C, 0xD0B8B83F98361402, 0x73E428E1F7099233, 0x83A2583D63611486,
                     0xE770A16066AB28EE, 0xAF1D1CE3A22429D8, 0xB099A051650BDF07, 0xB71EEF198ADD76A2,
                     0x26ECD1411368A778, 0x5EF9B2158A0350D8, 0xD792BB1B36AFDD12, 0x86F0F3835F76A1AE,
@@ -238,9 +328,11 @@
                     0x71316DA5CD203110, 0xD0AFCC14FC650B48, 0xE41D939C085B2390, 0x5AFB350579AF0B37,
                     0x32677CBE6E5C8982, 0xFC5F0DF24A56A255, 0x96B1E9441C59204F, 0x5C81154429F970F9,
                     0x1915912829DB9B40, 0x5A13D78FC1B83F23, 0x6EEE52535D11D777, 0xD369006D9516C770,
-                    0x2EA97320423649D2, 0x3563C76014C98A0B, 0x856932A16FCB8046, 0x139E799BF19ACB97,
+                    0x2EA97320423649D2, 0x3563C76014C98A0B, 0x856932A16FCB8046, 0x139E799BF19ACB97
                 };
-                public static readonly ulong[] TORRE = {
+
+                public static readonly ulong[] TORRE =
+                {
                     0xE619CEF3F77BC173, 0x33BBF206292C2429, 0x8E9E312CFE8C5881, 0x9F459FD766F66CD0,
                     0x4200024341044084, 0x751EADD75D897E3A, 0xB81A60A95FB27A01, 0xCF7EB441D6B6216F,
                     0x45F87717D361AE3F, 0xDF8AE1EACCDF5BC6, 0x3831065B7EBEAF8C, 0x7610DA4CD45BF178,
@@ -256,9 +348,11 @@
                     0x41C4A97A0B8B21EA, 0x8D1A31D16B01EE95, 0x3B4E05E83CFCF05E, 0x339527603763D857,
                     0xE9C9568FBE372403, 0xCED2D9D4CE125169, 0xB0D68C7EF58974D9, 0x604589E3C6CCC55F,
                     0xF8281D74D2FB4BD7, 0x83DFE578B4D1C37D, 0xE1040393F8EAD3FF, 0xEEC994716BCAE446,
-                    0xD5E6A2ACBC432265, 0x441601B0952B7010, 0x17199E8C3A0BD6A5, 0x734ECB4B9428D28B,
+                    0xD5E6A2ACBC432265, 0x441601B0952B7010, 0x17199E8C3A0BD6A5, 0x734ECB4B9428D28B
                 };
-                public static readonly ulong[] DAMA = {
+
+                public static readonly ulong[] DAMA =
+                {
                     0x28DCAC985610869C, 0xE3C845317609E760, 0x04C7224351B10B62, 0x812418B46D33D655,
                     0x4A4BC5BDD1CDAAD0, 0xCB080CF07F001991, 0x63D6AA99A81E7023, 0xFDFC6C1606F1F6FB,
                     0x40C0DCDB0E3D1F6E, 0x0F8A4C36A596BDCC, 0x925F9E50BFD4DB02, 0xC619033B45FD8BC5,
@@ -274,9 +368,11 @@
                     0x62919A3D3C2BE2F6, 0x8A4BA91E7ABDAC23, 0xE893BF3B8919B72F, 0xFED88809D9B8B561,
                     0x3A7D7094A6191028, 0x29CC08C8B49709A0, 0x993CAD4DD9D610FA, 0x9E75E8FBAD7A9633,
                     0xB4ED430A46151CC8, 0x78982B83C9FF2C1F, 0x5C0FC745D4A2E4F4, 0x654069266032A04E,
-                    0x9AFF2766B05CEB46, 0x4142DDC4FE8AE5C1, 0xC37C6D157C0C6184, 0x6227E6F5B0E595B5,
+                    0x9AFF2766B05CEB46, 0x4142DDC4FE8AE5C1, 0xC37C6D157C0C6184, 0x6227E6F5B0E595B5
                 };
-                public static readonly ulong[] REI = {
+
+                public static readonly ulong[] REI =
+                {
                     0xCDEB431FAEE40146, 0xD585F951246E99E8, 0x0AE72E74F999FA16, 0x6C2600E48CB99754,
                     0xDE1BC2A05F26B911, 0x9C0112BF7628DC1C, 0xCCD66D72096FE4AC, 0x40002DA64C2F0184,
                     0x1D8DFE5B9C1A4047, 0x089FCA892DCA3B2A, 0xEBA61F4B671196B3, 0x86F1CE5F1EFBFED3,
@@ -292,62 +388,9 @@
                     0xE6E05DBF0B228173, 0xCAEC658BC939B031, 0x16762DE64DD13744, 0x9DAD6112EF4E1896,
                     0x084BFD9D44238F33, 0xF6731F5E2585DB3C, 0x2EEC57012C5F87F2, 0xE27A559B86A39DB5,
                     0x4BAD59B8F348C351, 0x2FE4AF4192E06D49, 0xBB9995B9355A3193, 0x54B5AA9C14EFB9C8,
-                    0x6ABB0E1E40A20DB4, 0x6B12522CAC87835E, 0xBA99D38CFCEE1C22, 0x089211A984711756,
+                    0x6ABB0E1E40A20DB4, 0x6B12522CAC87835E, 0xBA99D38CFCEE1C22, 0x089211A984711756
                 };
-
-                
             }
-        }
-
-        /// <summary>
-        /// Gera a chave para a posição atual do tabuleiro.
-        /// </summary>
-        /// <remarks>
-        /// Aqui estamos gerando a chave para a posição sempre que tivermos uma nova posição.
-        /// A maioria dos programas irá fazer isso de forma incremental, apenas atualizando 
-        /// os elementos que mudaram quando o movimento foi feito, exemplo a peça do movimento. 
-        /// Isso é possível por causa da forma como o "ou exclusivo" funciona.
-        /// </remarks>
-        /// <param name="tabuleiro">Tabuleiro.</param>
-        /// <returns>Chave da posição.</returns>
-        public static ulong ObtemChave(Tabuleiro tabuleiro)
-        {
-            ulong chave = 0;
-
-            for (int fileira = Defs.PRIMEIRA_FILEIRA; fileira < Defs.ULTIMA_FILEIRA; fileira++) {
-                for (int coluna = Defs.PRIMEIRA_COLUNA; coluna < Defs.ULTIMA_COLUNA; coluna++) {
-
-                    int indice12x12 = fileira * Defs.NUMERO_COLUNAS + coluna;
-                    sbyte peca = tabuleiro.ObtemPeca(indice12x12);
-                    if (peca == Defs.CASA_VAZIA) continue;
-                    int indice8x8 = Defs.Converte12x12Para8x8(indice12x12);
-
-                    if (peca == Defs.PEAO_BRANCO) { chave ^= Chave.Branco.PEAO[indice8x8]; continue; }
-                    if (peca == Defs.CAVALO_BRANCO) { chave ^= Chave.Branco.CAVALO[indice8x8]; continue; }
-                    if (peca == Defs.BISPO_BRANCO) { chave ^= Chave.Branco.BISPO[indice8x8]; continue; }
-                    if (peca == Defs.TORRE_BRANCA) { chave ^= Chave.Branco.TORRE[indice8x8]; continue; }
-                    if (peca == Defs.DAMA_BRANCA) { chave ^= Chave.Branco.DAMA[indice8x8]; continue; }
-                    if (peca == Defs.REI_BRANCO) { chave ^= Chave.Branco.REI[indice8x8]; continue; }
-
-                    if (peca == Defs.PEAO_PRETO) { chave ^= Chave.Preto.PEAO[indice8x8]; continue; }
-                    if (peca == Defs.CAVALO_PRETO) { chave ^= Chave.Preto.CAVALO[indice8x8]; continue; }
-                    if (peca == Defs.BISPO_PRETO) { chave ^= Chave.Preto.BISPO[indice8x8]; continue; }
-                    if (peca == Defs.TORRE_PRETA) { chave ^= Chave.Preto.TORRE[indice8x8]; continue; }
-                    if (peca == Defs.DAMA_PRETA) { chave ^= Chave.Preto.DAMA[indice8x8]; continue; }
-                    if (peca == Defs.REI_PRETO) { chave ^= Chave.Preto.REI[indice8x8]; continue; }
-                }
-            }
-
-            if (tabuleiro.IndiceEnPassant != 0) chave ^= Chave.ENPASSANT[Defs.Converte12x12Para8x8(tabuleiro.IndiceEnPassant)];
-
-            chave ^= Chave.Roque.E1G1[tabuleiro.RoqueE1G1 ? 0 : 1];
-            chave ^= Chave.Roque.E1C1[tabuleiro.RoqueE1C1 ? 0 : 1];
-            chave ^= Chave.Roque.E8G8[tabuleiro.RoqueE8G8 ? 0 : 1];
-            chave ^= Chave.Roque.E8C8[tabuleiro.RoqueE8C8 ? 0 : 1];
-
-            if (tabuleiro.CorJogar == Cor.Preta) chave ^= Chave.COR;
-
-            return chave;
         }
     }
 }

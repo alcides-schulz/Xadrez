@@ -88,25 +88,6 @@ namespace Enxadrista
             };
         }
 
-        public const sbyte BORDA = 10;          // Border
-        public const sbyte CASA_VAZIA = 0;      // Empty Square
-
-        // Definições das peças para o tabuleiro.
-        public const sbyte PEAO_BRANCO = 1;     // White Pawn
-        public const sbyte PEAO_PRETO = -1;     // Black Pawn
-        public const sbyte CAVALO_BRANCO = 2;   // White Knight
-        public const sbyte CAVALO_PRETO = -2;   // Black Knight
-        public const sbyte BISPO_BRANCO = 3;    // White Bishop
-        public const sbyte BISPO_PRETO = -3;    // Black Bishop
-        public const sbyte TORRE_BRANCA = 4;    // White Rook
-        public const sbyte TORRE_PRETA = -4;    // Black Rook
-        public const sbyte DAMA_BRANCA = 5;     // White Queen
-        public const sbyte DAMA_PRETA = -5;     // Black Queen
-        public const sbyte REI_BRANCO = 6;      // White King
-        public const sbyte REI_PRETO = -6;      // Black King
-
-        public const sbyte PECA_NENHUMA = 0;
-
         /// <summary>
         /// Coordenadas das posições do tabuleiro para imprimir.
         /// </summary>
@@ -178,27 +159,6 @@ namespace Enxadrista
         /// Profundidade máxima para a procura.
         /// </summary>
         public const int PROFUNDIDADE_MAXIMA = 64;
-        
-        /// <summary>
-        /// Letra do elemento do tabuleiro.
-        /// </summary>
-        /// <param name="elemento_do_tabuleiro"></param>
-        /// <returns></returns>
-        public static char Letra(sbyte elemento_do_tabuleiro)
-        {
-            if (elemento_do_tabuleiro == BORDA) return '-';
-
-            int valor = Math.Abs(elemento_do_tabuleiro);
-            if (valor >= 0 && valor <= 6)
-            {
-                var letra = " PNBRQK".ElementAt(valor);
-                if (elemento_do_tabuleiro < 0) letra = Char.ToLower(letra);
-                return letra;
-            }
-                        
-            return '?'; // nao deveria chegar aqui.
-        }
-
 
         /// <summary>
         /// Conversão de coordenadas.
@@ -305,6 +265,5 @@ namespace Enxadrista
         {
             return indice >= (int)Defs.INDICE.A7 && indice <= (int)Defs.INDICE.H7;
         }
-
     }
 }
